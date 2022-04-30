@@ -4,15 +4,15 @@ import math
 
 
 class Vector:
-    __x : int
-    __y : int
+    __x: int
+    __y: int
 
-    def __init__(self, x : int, y : int):
+    def __init__(self, x: int, y: int):
         self.__x = x
         self.__y = y
 
     @staticmethod
-    def from_polar(angle : Literal[0, 90, 180, 270], radius : int) -> Vector:
+    def from_polar(angle: Literal[0, 90, 180, 270], radius: int) -> Vector:
         if angle == 0:
             return NORTH * radius
         elif angle == 90:
@@ -46,26 +46,26 @@ class Vector:
         y = self.__x
         return Vector(x, y)
 
-    def __add__(self, other : Vector) -> Vector:
+    def __add__(self, other: Vector) -> Vector:
         x = self.x + other.x
         y = self.y + other.y
         return Vector(x, y)
 
-    def __sub__(self, other : Vector) -> Vector:
+    def __sub__(self, other: Vector) -> Vector:
         x = self.x - other.x
         y = self.y - other.y
         return Vector(x, y)
 
-    def __mul__(self, factor : int) -> Vector:
+    def __mul__(self, factor: int) -> Vector:
         x = self.x * factor
         y = self.y * factor
         return Vector(x, y)
 
-    def __eq__(self, other : object) -> bool:
+    def __eq__(self, other: object) -> bool:
         return isinstance(other, Vector) and self.x == other.x and self.y == other.y
 
 
-NORTH : Vector = Vector(0, 1)
-EAST : Vector = Vector(1, 0)
-SOUTH : Vector = Vector(0, -1)
-WEST : Vector = Vector(-1, 0)
+NORTH: Vector = Vector(0, 1)
+EAST: Vector = Vector(1, 0)
+SOUTH: Vector = Vector(0, -1)
+WEST: Vector = Vector(-1, 0)
