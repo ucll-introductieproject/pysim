@@ -1,11 +1,7 @@
-from typing import Tuple
-
 import pygame
-from pygame import Vector2, Rect
+from pygame import Vector2, Rect, Color
 
 from .primitive import Primitive
-
-Color = Tuple[int, int, int]
 
 
 class Circle(Primitive):

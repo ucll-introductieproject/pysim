@@ -1,7 +1,7 @@
 from random import Random
 from typing import List
 
-from pygame import Vector2
+from pygame import Vector2, Color
 
 from pysim.graphics.animations.animation import Animation
 from pysim.graphics.animations.particle import Particle
@@ -24,7 +24,7 @@ class Explosion(Animation[Primitive]):
             r = rnd.randint(220, 255)
             g = rnd.randint(0, 200)
             b = 0
-            color = (r, g, b)
+            color = Color(r, g, b)
             return Particle(position, velocity, size, duration, color)
 
         self.__duration = duration

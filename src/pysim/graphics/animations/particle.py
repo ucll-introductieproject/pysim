@@ -1,6 +1,4 @@
-from typing import Tuple
-
-from pygame import Vector2, Rect
+from pygame import Vector2, Rect, Color
 
 from pysim.graphics.animations.animation import Animation
 from pysim.graphics.primitives.primitive import Primitive
@@ -12,14 +10,14 @@ class Particle(Animation[Primitive]):
     __velocity: Vector2
     __size: float
     __duration: float
-    __color: Tuple[int, int, int]
+    __color: Color
 
     def __init__(self,
                  position: Vector2,
                  velocity: Vector2,
                  size: float,
                  duration: float,
-                 color: Tuple[int, int, int]):
+                 color: Color):
         self.__position = position
         self.__velocity = velocity
         self.__size = size
