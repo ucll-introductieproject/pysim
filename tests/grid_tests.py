@@ -1,7 +1,6 @@
 import pytest
 
-from pysim.data.grid import Grid
-from pysim.data.vector import Vector
+from pysim.data import Grid, Vector
 
 
 @pytest.mark.parametrize("width, height", [(w, h) for w in range(1, 10) for h in range(1, 10)])
