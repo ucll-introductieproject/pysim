@@ -2,34 +2,21 @@ from multiprocessing import Process, Queue
 from typing import Any, Callable, TypeVar, Generic
 
 from pysim.actors.channel import Channel
+from pysim.actors.environment import collect_exported_methods
 
 T = TypeVar('T')
-
-
-def export(func):
-    func.exported = True
-    return func
-
-
-def is_exported_method(object):
-    return hasattr(object, 'exported') and callable(object) and object.exported
-
-
-def collect_exported_methods(cl):
-    return [id for id, member in cl.__dict__.items() if is_exported_method(member)]
 
 
 def _create_mapping_from_environment(environment) -> dict[str, Any]:
     exported_members_ids = collect_exported_methods(type(environment))
     result = {}
 
-    for id in exported_members_ids:
+    for member_id in exported_members_ids:
         # Fighting Python's scope rules
         def body():
             nonlocal result
-            member = getattr(environment, id)
-            func = lambda *args, **kwargs: member(*args, **kwargs)
-            result[id] = func
+            member = getattr(environment, member_id)
+            result[member_id] = lambda *args, **kwargs: member(*args, **kwargs)
 
         body()
 
