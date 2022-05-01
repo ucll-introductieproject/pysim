@@ -1,2 +1,2 @@
 from .grid import Grid
-from .vector import Vector, NORTH, EAST, SOUTH, WEST
+from .vector import Vector

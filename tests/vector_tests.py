@@ -1,6 +1,7 @@
 from pytest import mark
 
-from pysim.data import Vector, NORTH, EAST, SOUTH, WEST
+from pysim.data import Vector
+from pysim.data.vector import NORTH, EAST, SOUTH, WEST
 
 
 @mark.parametrize('x, y', [(x, y) for x in range(-5, 5) for y in range(-5, 5)])
