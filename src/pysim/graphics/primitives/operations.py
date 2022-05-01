@@ -9,6 +9,7 @@ class UnionPrimitive(Primitive):
     __children: List[Primitive]
 
     def __init__(self, children: List[Primitive]):
+        assert len(children) >= 1
         self.__children = children
 
     def render(self, surface: pygame.Surface) -> None:
