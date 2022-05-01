@@ -6,7 +6,7 @@ from pygame import Vector2, Color
 from pysim.graphics.animations.animation import Animation
 from pysim.graphics.animations.particle import Particle
 from pysim.graphics.primitives.primitive import Primitive
-from pysim.graphics.primitives.union import UnionPrimitive
+from pysim.graphics.primitives.transform import UnionPrimitive
 
 
 class Explosion(Animation[Primitive]):

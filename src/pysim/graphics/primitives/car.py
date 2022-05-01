@@ -4,7 +4,7 @@ from pygame import Vector2, Rect, Color
 
 from .primitive import Primitive
 from .shapes import Rectangle
-from .union import UnionPrimitive
+from .transform import UnionPrimitive
 
 
 def _create_body(position: Vector2, color: Color, size: Tuple[float, float]) -> Primitive:
