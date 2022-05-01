@@ -11,7 +11,10 @@ def almost(n):
 
 
 @mark.parametrize("start, stop, duration",
-                  [(start, stop, duration) for start in range(1, 10) for stop in range(1, 10) for duration in
+                  [(start, stop, duration)
+                   for start in range(1, 10)
+                   for stop in range(1, 10)
+                   for duration in
                    range(1, 10)])
 def test_start(start, stop, duration):
     animation = LinearFloatAnimation(start=start, stop=stop, duration=duration)
@@ -19,16 +22,20 @@ def test_start(start, stop, duration):
 
 
 @mark.parametrize("start, stop, duration",
-                  [(start, stop, duration) for start in range(1, 10) for stop in range(1, 10) for duration in
-                   range(1, 10)])
+                  [(start, stop, duration)
+                   for start in range(1, 10)
+                   for stop in range(1, 10)
+                   for duration in range(1, 10)])
 def test_stop(start, stop, duration):
     animation = LinearFloatAnimation(start=start, stop=stop, duration=duration)
     assert animation[almost(duration)] == approx(stop)
 
 
 @mark.parametrize("start, stop, duration",
-                  [(start, stop, duration) for start in range(1, 10) for stop in range(1, 10) for duration in
-                   range(1, 10)])
+                  [(start, stop, duration)
+                   for start in range(1, 10)
+                   for stop in range(1, 10)
+                   for duration in range(1, 10)])
 def test_middle(start, stop, duration):
     animation = LinearFloatAnimation(start=start, stop=stop, duration=duration)
     expected = (start + stop) / 2
