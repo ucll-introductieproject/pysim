@@ -1,4 +1,3 @@
-from abc import ABC
 from typing import List
 
 import pygame
@@ -6,7 +5,7 @@ import pygame
 from pysim.graphics.primitives.primitive import Primitive
 
 
-class UnionPrimitive(ABC):
+class UnionPrimitive(Primitive):
     __children: List[Primitive]
 
     def __init__(self, children: List[Primitive]):
