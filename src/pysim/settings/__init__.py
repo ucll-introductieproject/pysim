@@ -10,7 +10,7 @@ class _GlobalSettings:
     __runtime_settings: DictionarySettings
 
     def __init__(self):
-        __runtime_settings = DictionarySettings()
+        self.__runtime_settings = DictionarySettings()
         self.__settings = HierarchicalSettings([
             self.__runtime_settings,
             self.__create_default_settings(),
