@@ -1,7 +1,7 @@
 import pygame
 
-from pysim.graphics.gui.mainwindow import MainWindow
-from pysim.graphics.gui.screen import Screen
+from pysim.gui.mainwindow import MainWindow
+from pysim.gui.screen import Screen
 
 
 class TestScreen(Screen):
