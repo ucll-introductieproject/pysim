@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import Literal, Iterable
+from typing import Iterable
 
 
 class Vector:
@@ -13,15 +13,15 @@ class Vector:
         self.__y = y
 
     @staticmethod
-    def from_polar(angle: Literal[0, 90, 180, 270], radius: int) -> Vector:
+    def from_polar(angle: float, radius: int) -> Vector:
         if angle == 0:
-            return NORTH * radius
-        elif angle == 90:
-            return WEST * radius
-        elif angle == 180:
-            return SOUTH * radius
-        elif angle == 270:
             return EAST * radius
+        elif angle == 90:
+            return SOUTH * radius
+        elif angle == 180:
+            return WEST * radius
+        elif angle == 270:
+            return NORTH * radius
         else:
             assert False
 
