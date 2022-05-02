@@ -54,5 +54,7 @@ class _CarBuilder:
         return Rectangle(rect, color)
 
 
-def create_car(color: Color, size: Tuple[float, float]) -> Image:
-    return _CarBuilder(color, size).build()
+def create_car(color: Color, size: float) -> Image:
+    width = 0.6 * size
+    height = size
+    return _CarBuilder(color, (width, height)).build()
