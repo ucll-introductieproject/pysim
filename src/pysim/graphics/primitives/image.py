@@ -17,5 +17,5 @@ class Image(Primitive):
         surface.blit(self.__surface, position)
 
     def transform(self, displacement: Vector2, rotation_angle: float) -> Primitive:
-        rotated = transform.rotate(self.__surface, rotation_angle)
+        rotated = transform.rotate(self.__surface, -rotation_angle)
         return Image(self.__center + displacement, rotated)
