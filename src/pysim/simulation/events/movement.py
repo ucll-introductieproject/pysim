@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 from pygame import Vector2, Color
 
 from pysim.data import Vector
@@ -45,7 +47,7 @@ class BackwardEvent(MoveEvent):
         super().__init__(start, -Vector.from_orientation(orientation), orientation)
 
 
-class TurnLeftEvent(Event):
+class TurnEvent(Event):
     __position: Vector
     __start_orientation: Orientation
 
@@ -57,7 +59,16 @@ class TurnLeftEvent(Event):
         tile_rect = settings.tile_rectangle(self.__position)
         position = Vector2(tile_rect.center)
         start = self.__start_orientation.angle
-        stop = self.__start_orientation.turn_left().angle
+        stop = self._make_turn(self.__start_orientation).angle
         angle_anim = LinearFloatAnimation(start, stop, 1)
         canonical_car = create_car(Color(255, 0, 0), settings.tile_size)
         return angle_anim.map(lambda angle: canonical_car.transform(position, angle))
+
+    @abstractmethod
+    def _make_turn(self, orientation: Orientation) -> Orientation:
+        ...
+
+
+class TurnLeftEvent(TurnEvent):
+    def _make_turn(self, orientation: Orientation) -> Orientation:
+        return orientation.turn_left()
