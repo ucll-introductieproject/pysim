@@ -10,12 +10,12 @@ from pysim.gui.screen import Screen
 
 class TestScreen(Screen):
     __animation: Animation[Primitive]
-    __car: Primitive
+    # __car: Primitive
     __total_time: float
 
     def __init__(self, animation: Animation[Primitive]):
         self.__animation = animation
-        self.__car = create_car_primitive(pygame.Vector2(250, 250), 0, pygame.Color(255, 0, 0), (80, 120))
+        # self.__car = create_car_primitive(pygame.Vector2(250, 250), 45, pygame.Color(255, 0, 0), (80, 120))
         self.__total_time = 0
 
     def update(self, elapsed_seconds: float) -> None:
@@ -23,7 +23,9 @@ class TestScreen(Screen):
 
     def render(self, surface: pygame.Surface) -> None:
         self.__clear_screen(surface)
-        self.__car.render(surface)
+        # self.__car.render(surface)
+        create_car_primitive(pygame.Vector2(250, 250), self.__total_time * 90, pygame.Color(255, 0, 0),
+                             (80, 120)).render(surface)
         # self.__animation[self.__total_time].render(surface)
 
     def __clear_screen(self, surface: pygame.Surface) -> None:
