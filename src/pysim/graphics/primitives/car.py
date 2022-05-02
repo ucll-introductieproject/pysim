@@ -20,7 +20,8 @@ class _CarBuilder:
     def __create_image(self, color: Color, size: Tuple[float, float]) -> Surface:
         whole = UnionPrimitive([
             self.__create_body(color, size),
-            *self.__create_wheels(size)
+            *self.__create_wheels(size),
+            self.__create_windshield(size),
         ])
         surface = Surface(size)
         surface.set_colorkey((255, 255, 255))
@@ -34,13 +35,22 @@ class _CarBuilder:
         rect = Rect(left, top, width, height)
         return Rectangle(rect, color)
 
+    def __create_windshield(self, size: Tuple[float, float]) -> Primitive:
+        width, height = size
+        w = width * 0.2
+        h = height * 0.8
+        left = width - w
+        top = (height - h) / 2
+        rect = Rect(left, top, w, h)
+        return Rectangle(rect, Color(0, 255, 255))
+
     def __create_wheels(self, size: Tuple[float, float]) -> Iterable[Primitive]:
         width, height = size
-        wheel_width = width * 0.15
-        wheel_height = height * 0.3
+        wheel_width = width * 0.3
+        wheel_height = height * 0.15
         center = Vector2(width / 2, height / 2)
-        return (self.__create_wheel(center - Vector2(a * (width * 0.5 - wheel_width / 2),
-                                                     b * (height * 0.4 - wheel_height / 2)),
+        return (self.__create_wheel(center - Vector2(a * (width * 0.4 - wheel_width / 2),
+                                                     b * (height * 0.5 - wheel_height / 2)),
                                     (wheel_width, wheel_height))
                 for a in [-1, 1]
                 for b in [-1, 1])
@@ -55,6 +65,6 @@ class _CarBuilder:
 
 
 def create_car(color: Color, size: float) -> Image:
-    width = 0.6 * size
-    height = size
+    width = size
+    height = 0.6 * size
     return _CarBuilder(color, (width, height)).build()
