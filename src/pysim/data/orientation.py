@@ -16,8 +16,8 @@ class Orientation(ABC):
     def turn_around(self) -> Orientation:
         ...
 
-    @abstractmethod
     @property
+    @abstractmethod
     def angle(self) -> float:
         ...
 
