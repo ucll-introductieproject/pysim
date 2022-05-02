@@ -12,30 +12,33 @@ class _CarBuilder:
     __image: Surface
 
     def __init__(self, color: Color, size: Tuple[float, float]):
-        self.__image = self.__create_image(color, size)
+        self.__image = _CarBuilder.__create_image(color, size)
 
     def build(self) -> Image:
         return Image(Vector2(0, 0), self.__image)
 
-    def __create_image(self, color: Color, size: Tuple[float, float]) -> Surface:
+    @staticmethod
+    def __create_image(color: Color, size: Tuple[float, float]) -> Surface:
         whole = UnionPrimitive([
-            self.__create_body(color, size),
-            *self.__create_wheels(size),
-            self.__create_windshield(size),
+            _CarBuilder.__create_body(color, size),
+            *_CarBuilder.__create_wheels(size),
+            _CarBuilder.__create_windshield(size),
         ])
         surface = Surface(size)
         surface.set_colorkey((255, 255, 255))
         whole.render(surface)
         return surface
 
-    def __create_body(self, color: Color, size: Tuple[float, float]) -> Primitive:
+    @staticmethod
+    def __create_body(color: Color, size: Tuple[float, float]) -> Primitive:
         left = 0
         top = 0
         width, height = size
         rect = Rect(left, top, width, height)
         return Rectangle(rect, color)
 
-    def __create_windshield(self, size: Tuple[float, float]) -> Primitive:
+    @staticmethod
+    def __create_windshield(size: Tuple[float, float]) -> Primitive:
         width, height = size
         w = width * 0.2
         h = height * 0.8
@@ -44,18 +47,20 @@ class _CarBuilder:
         rect = Rect(left, top, w, h)
         return Rectangle(rect, Color(0, 255, 255))
 
-    def __create_wheels(self, size: Tuple[float, float]) -> Iterable[Primitive]:
+    @staticmethod
+    def __create_wheels(size: Tuple[float, float]) -> Iterable[Primitive]:
         width, height = size
         wheel_width = width * 0.3
         wheel_height = height * 0.15
         center = Vector2(width / 2, height / 2)
-        return (self.__create_wheel(center - Vector2(a * (width * 0.4 - wheel_width / 2),
-                                                     b * (height * 0.5 - wheel_height / 2)),
-                                    (wheel_width, wheel_height))
+        return (_CarBuilder.__create_wheel(center - Vector2(a * (width * 0.4 - wheel_width / 2),
+                                                            b * (height * 0.5 - wheel_height / 2)),
+                                           (wheel_width, wheel_height))
                 for a in [-1, 1]
                 for b in [-1, 1])
 
-    def __create_wheel(self, position: Vector2, size: Tuple[float, float]) -> Primitive:
+    @staticmethod
+    def __create_wheel(position: Vector2, size: Tuple[float, float]) -> Primitive:
         width, height = size
         left = position.x - width / 2
         top = position.y - height / 2
