@@ -13,10 +13,11 @@ class _GlobalSettings:
         self.__runtime_settings = DictionarySettings()
         self.__settings = HierarchicalSettings([
             self.__runtime_settings,
-            self.__create_default_settings(),
+            _GlobalSettings.__create_default_settings(),
         ])
 
-    def __create_default_settings(self) -> Settings:
+    @staticmethod
+    def __create_default_settings() -> Settings:
         return DictionarySettings({
             'show_fps': False,
             'max_fps': 0,
