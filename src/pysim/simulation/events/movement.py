@@ -40,6 +40,11 @@ class ForwardEvent(MoveEvent):
         super().__init__(start, Vector.from_orientation(orientation), orientation)
 
 
+class BackwardEvent(MoveEvent):
+    def __init__(self, start: Vector, orientation: Orientation):
+        super().__init__(start, -Vector.from_orientation(orientation), orientation)
+
+
 class TurnLeftEvent(Event):
     __position: Vector
     __start_orientation: Orientation
