@@ -72,3 +72,8 @@ class TurnEvent(Event):
 class TurnLeftEvent(TurnEvent):
     def _make_turn(self, orientation: Orientation) -> Orientation:
         return orientation.turn_left()
+
+
+class TurnRightEvent(TurnEvent):
+    def _make_turn(self, orientation: Orientation) -> Orientation:
+        return orientation.turn_right()

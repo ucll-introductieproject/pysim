@@ -1,7 +1,7 @@
 from pysim.data import Vector
 from pysim.data.orientation import Orientation
 from pysim.simulation.events.event import Event
-from pysim.simulation.events.movement import TurnLeftEvent, ForwardEvent, BackwardEvent
+from pysim.simulation.events.movement import TurnLeftEvent, ForwardEvent, BackwardEvent, TurnRightEvent
 
 
 class Simulation:
@@ -27,4 +27,9 @@ class Simulation:
     def turn_left(self) -> Event:
         event = TurnLeftEvent(self.__position, self.__orientation)
         self.__orientation = self.__orientation.turn_left()
+        return event
+
+    def turn_right(self) -> Event:
+        event = TurnRightEvent(self.__position, self.__orientation)
+        self.__orientation = self.__orientation.turn_right()
         return event
