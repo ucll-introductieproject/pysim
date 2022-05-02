@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import Literal
+
 import math
+from typing import Literal, Iterable
 
 
 class Vector:
@@ -16,11 +17,11 @@ class Vector:
         if angle == 0:
             return NORTH * radius
         elif angle == 90:
-            return EAST * radius
+            return WEST * radius
         elif angle == 180:
             return SOUTH * radius
         elif angle == 270:
-            return WEST * radius
+            return EAST * radius
         else:
             assert False
 
@@ -64,8 +65,12 @@ class Vector:
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Vector) and self.x == other.x and self.y == other.y
 
+    def __iter__(self) -> Iterable[int]:
+        yield self.x
+        yield self.y
 
-NORTH: Vector = Vector(0, 1)
+
+NORTH: Vector = Vector(0, -1)
 EAST: Vector = Vector(1, 0)
-SOUTH: Vector = Vector(0, -1)
+SOUTH: Vector = Vector(0, 1)
 WEST: Vector = Vector(-1, 0)
