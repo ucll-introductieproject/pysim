@@ -1,6 +1,6 @@
 from typing import Tuple, Iterable
 
-from pygame import Vector2, Rect, Color, Surface, transform
+from pygame import Vector2, Rect, Color, Surface
 
 from .image import Image
 from .operations import UnionPrimitive
@@ -8,15 +8,14 @@ from .primitive import Primitive
 from .shapes import Rectangle
 
 
-class Car:
+class _CarBuilder:
     __image: Surface
 
     def __init__(self, color: Color, size: Tuple[float, float]):
         self.__image = self.__create_image(color, size)
 
-    def build(self, position: Vector2, angle: float) -> Primitive:
-        rotated = transform.rotate(self.__image, angle)
-        return Image(position, rotated)
+    def build(self) -> Image:
+        return Image(Vector2(0, 0), self.__image)
 
     def __create_image(self, color: Color, size: Tuple[float, float]) -> Surface:
         whole = UnionPrimitive([
@@ -53,3 +52,7 @@ class Car:
         rect = Rect(left, top, width, height)
         color = Color(0, 0, 0)
         return Rectangle(rect, color)
+
+
+def create_car(color: Color, size: Tuple[float, float]) -> Image:
+    return _CarBuilder(color, size).build()
