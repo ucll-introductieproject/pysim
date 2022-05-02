@@ -12,10 +12,12 @@ from pysim.simulation.events.event import Event, AnimationSettings
 
 class MoveEvent(Event):
     __start: Vector
+    __displacement: Vector
     __orientation: Orientation
 
-    def __init__(self, start: Vector, orientation: Orientation):
+    def __init__(self, start: Vector, displacement: Vector, orientation: Orientation):
         self.__start = start
+        self.__displacement = displacement
         self.__orientation = orientation
 
     def animate(self, settings: AnimationSettings) -> Animation[Primitive]:
@@ -24,14 +26,18 @@ class MoveEvent(Event):
             y = y_anim[time]
             return Vector2(x, y)
 
-        direction = Vector.from_orientation(self.__orientation)
         sx, sy = settings.tile_rectangle(self.__start).center
-        ex, ey = settings.tile_rectangle(self.__start + direction).center
+        ex, ey = settings.tile_rectangle(self.__start + self.__displacement).center
         x_anim = LinearFloatAnimation(sx, ex, 1)
         y_anim = LinearFloatAnimation(sy, ey, 1)
         pos_anim = FunctionAnimation[Vector2](1, compute_position)
         canonical_car = create_car(Color(255, 0, 0), settings.tile_size)
         return pos_anim.map(lambda p: canonical_car.transform(p, self.__orientation.angle))
+
+
+class ForwardEvent(MoveEvent):
+    def __init__(self, start: Vector, orientation: Orientation):
+        super().__init__(start, Vector.from_orientation(orientation), orientation)
 
 
 class TurnLeftEvent(Event):
