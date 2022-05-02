@@ -14,6 +14,7 @@ class StepwiseAnimation(Animation[T]):
         self.__children = children
 
     def __getitem__(self, time: float) -> T:
+        assert 0 <= time < self.duration
         step_index = math.floor(time)
         t = time - step_index
         return self.__children[step_index][t]
