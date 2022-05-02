@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import math
 from typing import Iterable
+
+from pysim.data.orientation import Orientation, NORTH, WEST, SOUTH, EAST
 
 
 class Vector:
@@ -13,21 +14,17 @@ class Vector:
         self.__y = y
 
     @staticmethod
-    def from_polar(angle: float, radius: int) -> Vector:
-        if angle == 0:
-            return EAST * radius
-        elif angle == 90:
-            return SOUTH * radius
-        elif angle == 180:
-            return WEST * radius
-        elif angle == 270:
-            return NORTH * radius
+    def from_orientation(orientation: Orientation) -> Vector:
+        if orientation is NORTH:
+            return Vector(0, -1)
+        elif orientation is WEST:
+            return Vector(-1, 0)
+        elif orientation is SOUTH:
+            return Vector(0, 1)
+        elif orientation is EAST:
+            return Vector(1, 0)
         else:
             assert False
-
-    @property
-    def angle(self) -> float:
-        return math.atan2(self.y, self.x)
 
     @property
     def x(self) -> int:
@@ -68,9 +65,3 @@ class Vector:
     def __iter__(self) -> Iterable[int]:
         yield self.x
         yield self.y
-
-
-NORTH: Vector = Vector(0, -1)
-EAST: Vector = Vector(1, 0)
-SOUTH: Vector = Vector(0, 1)
-WEST: Vector = Vector(-1, 0)
