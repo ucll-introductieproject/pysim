@@ -5,7 +5,7 @@ from pysim.graphics.animations.animation import Animation
 from pysim.graphics.primitives.primitive import Primitive
 from pysim.gui.mainwindow import MainWindow
 from pysim.gui.screen import Screen
-from pysim.simulation.events.movement import ForwardEvent
+from pysim.simulation.events.movement import TurnLeftEvent
 
 
 class TestScreen(Screen):
@@ -31,7 +31,8 @@ class TestScreen(Screen):
 def create_animation():
     start = Vector(2, 2)
     direction = SOUTH
-    event = ForwardEvent(start, direction)
+    # event = ForwardEvent(start, direction)
+    event = TurnLeftEvent(start, 0)
     return event.animate()
 
 

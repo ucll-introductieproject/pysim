@@ -35,3 +35,22 @@ class ForwardEvent(Event):
         pos_anim = FunctionAnimation[Vector2](1, compute_position)
         canonical_car = create_car(Color(255, 0, 0), tile_size)
         return pos_anim.map(lambda p: canonical_car.transform(p, 0))
+
+
+class TurnLeftEvent(Event):
+    __position: Vector
+    __start_angle: float
+
+    def __init__(self, position: Vector, start_angle: float):
+        self.__position = position
+        self.__start_angle = start_angle
+
+    def animate(self) -> Animation[Primitive]:
+        tile_size = 128
+        x, y = self.__position
+        position = Vector2(x * tile_size, y * tile_size)
+        start = self.__start_angle
+        stop = start + 90
+        angle_anim = LinearFloatAnimation(start, stop, 1)
+        canonical_car = create_car(Color(255, 0, 0), tile_size)
+        return angle_anim.map(lambda angle: canonical_car.transform(position, angle))
