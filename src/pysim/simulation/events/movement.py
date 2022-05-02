@@ -10,7 +10,7 @@ from pysim.graphics.primitives.primitive import Primitive
 from pysim.simulation.events.event import Event, AnimationSettings
 
 
-class ForwardEvent(Event):
+class MoveEvent(Event):
     __start: Vector
     __orientation: Orientation
 
