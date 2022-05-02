@@ -59,6 +59,11 @@ class Vector:
         y = self.y * factor
         return Vector(x, y)
 
+    def __neg__(self) -> Vector:
+        x = -self.x
+        y = -self.y
+        return Vector(x, y)
+
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Vector) and self.x == other.x and self.y == other.y
 
