@@ -21,7 +21,8 @@ class _GlobalSettings:
         return DictionarySettings({
             'show_fps': False,
             'max_fps': 0,
-            'speedup': 5,
+            'speedup': 2,
+            'explosion_particles': 20
         })
 
     def __getitem__(self, key: str) -> Any:
