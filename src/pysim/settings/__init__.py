@@ -21,7 +21,8 @@ class _GlobalSettings:
         return DictionarySettings({
             'show_fps': False,
             'max_fps': 0,
-            'speedup': 2,
+            'speedup': 0.1,
+            'tile_size': 64,
             'explosion_particles': 20
         })
 
