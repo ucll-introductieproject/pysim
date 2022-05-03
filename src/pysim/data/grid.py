@@ -14,6 +14,9 @@ class Grid(Generic[T]):
     def __getitem__(self, position: Vector) -> T:
         return self.__contents[position.y][position.x]
 
+    def __setitem__(self, position: Vector, value: T) -> None:
+        self.__contents[position.y][position.x] = value
+
     @property
     def width(self) -> int:
         return len(self.__contents[0])
