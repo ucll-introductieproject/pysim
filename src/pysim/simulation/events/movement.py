@@ -77,3 +77,8 @@ class TurnLeftEvent(TurnEvent):
 class TurnRightEvent(TurnEvent):
     def _make_turn(self, orientation: Orientation) -> Orientation:
         return orientation.turn_right()
+
+
+class BumpEvent(MoveEvent):
+    def __init__(self, start: Vector, orientation: Orientation):
+        super().__init__(start, Vector(0, 0), orientation)

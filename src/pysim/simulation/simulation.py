@@ -4,7 +4,7 @@ from pysim.data import Vector
 from pysim.data.orientation import Orientation
 from pysim.simulation.events.event import Event
 from pysim.simulation.events.explosion import ExplosionEvent
-from pysim.simulation.events.movement import TurnLeftEvent, ForwardEvent, BackwardEvent, TurnRightEvent
+from pysim.simulation.events.movement import TurnLeftEvent, ForwardEvent, BackwardEvent, TurnRightEvent, BumpEvent
 from pysim.simulation.events.parallel import ParallelEvents
 from pysim.simulation.world import World, Wall
 
@@ -21,11 +21,16 @@ class Simulation:
 
     def forward(self) -> Event:
         old_position = self.__position
-        self.__position += Vector.from_orientation(self.__orientation)
-        events: List[Event] = [ForwardEvent(old_position, self.__orientation)]
-        if isinstance(self.__world[self.__position], Wall):
-            events.append(ExplosionEvent(self.__position))
-        return self.__pack_events(events)
+        new_position = self.__position + Vector.from_orientation(self.__orientation)
+        destination_tile = self.__world[new_position]
+        if isinstance(destination_tile, Wall):
+            return BumpEvent(old_position, self.__orientation)
+        else:
+            self.__position = new_position
+            events: List[Event] = [ForwardEvent(old_position, self.__orientation)]
+            if isinstance(self.__world[self.__position], Wall):
+                events.append(ExplosionEvent(self.__position))
+            return self.__pack_events(events)
 
     def backward(self) -> Event:
         old_position = self.__position
