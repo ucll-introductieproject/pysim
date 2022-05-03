@@ -1,7 +1,7 @@
 import pygame
-from pygame import draw
 
 from pysim.data import Grid
+from pysim.data.mutable_cell import MutableCell
 from pysim.data.orientation import NORTH
 from pysim.data.vector import Vector
 from pysim.graphics.animations.animation import Animation
@@ -46,7 +46,7 @@ class TestScreen(Screen):
 
     def render(self, surface: pygame.Surface) -> None:
         TestScreen.__clear_screen(surface)
-        self.__draw_checkerboard(surface)
+        self.__render_world(surface)
         return self.__animation[self.__total_time].render(surface)
 
     @staticmethod
@@ -54,28 +54,16 @@ class TestScreen(Screen):
         color = (128, 128, 128)
         surface.fill(color)
 
-    def __draw_checkerboard(self, surface: pygame.Surface) -> None:
-        for x in range(self.__world.width):
-            for y in range(self.__world.height):
-                position = Vector(x, y)
-                left = x * tile_size
-                top = y * tile_size
-                rect = pygame.Rect(left, top, tile_size, tile_size)
-                color = (255, 255, 255) if isinstance(self.__world[position], Empty) else (0, 0, 0)
-                draw.rect(surface, color, rect)
+    def __render_world(self, surface: pygame.Surface) -> None:
+        self.__world.render(surface, Settings())
 
 
 def create_world() -> World:
-    def initialize(position: Vector) -> Tile:
-        if position.x == 0 or position.x == width - 1 or position.y == 0 or position.y == height - 1:
-            return Wall()
-        else:
-            return Empty()
-
     width = 10
     height = 10
-    grid = Grid[Tile](width, height, initialize)
-    world = World(grid)
+    grid: Grid[MutableCell[Tile]] = Grid(width, height, lambda p: MutableCell[Tile](Empty()))
+    grid[Vector(0, 0)].value = Wall()
+    world = World(Grid[Tile](width, height, lambda p: grid[p].value))
     return world
 
 
