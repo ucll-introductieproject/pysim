@@ -5,7 +5,7 @@ from .animation import Animation
 T = TypeVar('T')
 
 
-class ConstantAnimation(Animation[float]):
+class ConstantAnimation(Animation[T]):
     __constant: T
     __duration: float
 

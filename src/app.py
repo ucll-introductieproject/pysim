@@ -13,7 +13,7 @@ from pysim.settings import settings
 from pysim.simulation.animator import Animator
 from pysim.simulation.entities.agent import Agent
 from pysim.simulation.entities.block import Block
-from pysim.simulation.simulation import Simulation, Simulator
+from pysim.simulation.simulation import Simulation
 from pysim.simulation.world import Tile, Wall, Empty, World
 
 
@@ -72,11 +72,16 @@ def create_simulation() -> Simulation:
 
 
 def create_animation(simulation: Simulation):
-    animator = Animator(Settings())
-    for event in Simulator(simulation). \
-            forward().forward().turn_left().forward().forward().turn_left().forward().forward().events:
-        animator.add(event)
-    return animator.render()
+    animator = Animator(simulation, Settings())
+    animator.forward()
+    animator.forward()
+    animator.turn_left()
+    animator.forward()
+    animator.forward()
+    animator.turn_left()
+    animator.forward()
+    animator.forward()
+    return animator.build_animation()
 
 
 def main():
