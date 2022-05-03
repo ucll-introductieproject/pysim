@@ -5,17 +5,17 @@ from pysim.data.mutable_cell import MutableCell
 from pysim.data.orientation import NORTH
 from pysim.data.vector import Vector
 from pysim.graphics.animations.animation import Animation
+from pysim.graphics.graphics_settings import GraphicsSettings
 from pysim.graphics.primitives.primitive import Primitive
 from pysim.gui.mainwindow import MainWindow
 from pysim.gui.screen import Screen
 from pysim.settings import settings
-from pysim.simulation.events.event import AnimationSettings
 from pysim.simulation.events.sequence import EventSequence
 from pysim.simulation.simulation import Simulation
 from pysim.simulation.world import Tile, Wall, Empty, World
 
 
-class Settings(AnimationSettings):
+class Settings(GraphicsSettings):
     @property
     def tile_size(self) -> float:
         return settings['tile_size']

@@ -7,9 +7,10 @@ from pysim.data.orientation import Orientation
 from pysim.graphics.animations.animation import Animation
 from pysim.graphics.animations.float import LinearFloatAnimation
 from pysim.graphics.animations.function import FunctionAnimation
+from pysim.graphics.graphics_settings import GraphicsSettings
 from pysim.graphics.primitives.car import create_car
 from pysim.graphics.primitives.primitive import Primitive
-from pysim.simulation.events.event import Event, AnimationSettings
+from pysim.simulation.events.event import Event
 
 
 class MoveEvent(Event):
@@ -22,7 +23,7 @@ class MoveEvent(Event):
         self.__displacement = displacement
         self.__orientation = orientation
 
-    def animate(self, settings: AnimationSettings) -> Animation[Primitive]:
+    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
         def compute_position(time: float) -> Vector2:
             x = x_anim[time]
             y = y_anim[time]
@@ -55,7 +56,7 @@ class TurnEvent(Event):
         self.__position = position
         self.__start_orientation = start_orientation
 
-    def animate(self, settings: AnimationSettings) -> Animation[Primitive]:
+    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
         tile_rect = settings.tile_rectangle(self.__position)
         position = Vector2(tile_rect.center)
         start = self.__start_orientation.angle
