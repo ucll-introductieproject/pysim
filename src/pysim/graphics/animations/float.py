@@ -6,7 +6,7 @@ class LinearFloatAnimation(Animation[float]):
     __stop: float
     __duration: float
 
-    def __init__(self, start, stop, duration):
+    def __init__(self, start: float, stop: float, duration: float):
         assert duration >= 0
 
         self.__start = start
