@@ -7,6 +7,7 @@ from pygame import Vector2, Color, Rect
 from pysim.data import Vector
 from pysim.data.orientation import Orientation
 from pysim.graphics.animations.animation import Animation
+from pysim.graphics.animations.constant import ConstantAnimation
 from pysim.graphics.animations.float import LinearFloatAnimation
 from pysim.graphics.animations.function import FunctionAnimation
 from pysim.graphics.graphics_settings import GraphicsSettings
@@ -17,7 +18,25 @@ from pysim.simulation.events.event import Event
 
 
 class BlockEvent(Event):
-    pass
+    def _render_block(self, position: Vector2, size: float) -> Primitive:
+        left = position.x - size / 2
+        top = position.y - size / 2
+        rect = Rect(left, top, size, size)
+        color = Color(128, 128, 128)
+        return Rectangle(rect, color)
+
+
+class StayEvent(BlockEvent):
+    __position: Vector
+
+    def __init__(self, position: Vector):
+        self.__position = position
+
+    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
+        position = Vector2(settings.tile_rectangle(self.__position).center)
+        size = settings.tile_size * 0.9
+        primitive = self._render_block(position, size)
+        return ConstantAnimation[Primitive](primitive, 1)
 
 
 class MoveEvent(BlockEvent):
@@ -35,13 +54,9 @@ class MoveEvent(BlockEvent):
             return Vector2(x, y)
 
         def compute_primitive(position: Vector2) -> Primitive:
-            size = settings.tile_size * 0.9
-            left = position.x - size / 2
-            top = position.y - size / 2
-            rect = Rect(left, top, size, size)
-            color = Color(128, 128, 128)
-            return Rectangle(rect, color)
+            return self._render_block(position, size)
 
+        size = settings.tile_size * 0.9
         sx, sy = settings.tile_rectangle(self.__start).center
         ex, ey = settings.tile_rectangle(self.__start + self.__displacement).center
         x_anim = LinearFloatAnimation(sx, ex, 1)
