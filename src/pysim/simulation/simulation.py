@@ -1,3 +1,5 @@
+from typing import List
+
 from pysim.data import Vector
 from pysim.data.orientation import Orientation
 from pysim.simulation.events.event import Event
@@ -20,20 +22,18 @@ class Simulation:
     def forward(self) -> Event:
         old_position = self.__position
         self.__position += Vector.from_orientation(self.__orientation)
-        event = ForwardEvent(old_position, self.__orientation)
+        events: List[Event] = [ForwardEvent(old_position, self.__orientation)]
         if isinstance(self.__world[self.__position], Wall):
-            return ParallelEvents([event, ExplosionEvent(self.__position)])
-        else:
-            return event
+            events.append(ExplosionEvent(self.__position))
+        return self.__pack_events(events)
 
     def backward(self) -> Event:
         old_position = self.__position
         self.__position -= Vector.from_orientation(self.__orientation)
-        event = BackwardEvent(old_position, self.__orientation)
+        events: List[Event] = [BackwardEvent(old_position, self.__orientation)]
         if isinstance(self.__world[self.__position], Wall):
-            return ParallelEvents([event, ExplosionEvent(self.__position)])
-        else:
-            return event
+            events.append(ExplosionEvent(self.__position))
+        return self.__pack_events(events)
 
     def turn_left(self) -> Event:
         event = TurnLeftEvent(self.__position, self.__orientation)
@@ -44,3 +44,9 @@ class Simulation:
         event = TurnRightEvent(self.__position, self.__orientation)
         self.__orientation = self.__orientation.turn_right()
         return event
+
+    def __pack_events(self, events: List[Event]) -> Event:
+        if len(events) == 1:
+            return events[0]
+        else:
+            return ParallelEvents(events)
