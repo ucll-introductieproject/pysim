@@ -13,6 +13,7 @@ from pysim.graphics.animations.function import FunctionAnimation
 from pysim.graphics.graphics_settings import GraphicsSettings
 from pysim.graphics.primitives.car import create_car
 from pysim.graphics.primitives.primitive import Primitive
+from pysim.simulation.entities.entity import Entity
 from pysim.simulation.events.event import Event
 
 
@@ -92,7 +93,7 @@ class BumpEvent(MoveEvent):
         super().__init__(start, Vector(0, 0), orientation)
 
 
-class Agent:
+class Agent(Entity):
     __position: Vector
     __orientation: Orientation
 

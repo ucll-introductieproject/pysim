@@ -12,6 +12,7 @@ from pysim.graphics.animations.function import FunctionAnimation
 from pysim.graphics.graphics_settings import GraphicsSettings
 from pysim.graphics.primitives.primitive import Primitive
 from pysim.graphics.primitives.shapes import Rectangle
+from pysim.simulation.entities.entity import Entity
 from pysim.simulation.events.event import Event
 
 
@@ -49,7 +50,7 @@ class MoveEvent(BlockEvent):
         return pos_anim.map(compute_primitive)
 
 
-class Block:
+class Block(Entity):
     __position: Vector
 
     def __init__(self, position: Vector):
