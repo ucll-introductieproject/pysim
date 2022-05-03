@@ -8,6 +8,7 @@ from pygame import Vector2, Color
 from pysim.data import Vector
 from pysim.data.orientation import Orientation
 from pysim.graphics.animations.animation import Animation
+from pysim.graphics.animations.constant import ConstantAnimation
 from pysim.graphics.animations.float import LinearFloatAnimation
 from pysim.graphics.animations.function import FunctionAnimation
 from pysim.graphics.graphics_settings import GraphicsSettings
@@ -19,6 +20,22 @@ from pysim.simulation.events.event import Event
 
 class AgentEvent(Event):
     pass
+
+
+class StayEvent(AgentEvent):
+    __position: Vector
+    __orientation: Orientation
+
+    def __init__(self, position: Vector, orientation: Orientation):
+        self.__position = position
+        self.__orientation = orientation
+
+    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
+        canonical_car = create_car(Color(255, 0, 0), settings.tile_size)
+        position = Vector2(settings.tile_rectangle(self.__position).center)
+        angle = self.__orientation.angle
+        transformed_car = canonical_car.transform(position, angle)
+        return ConstantAnimation[Primitive](transformed_car, 1)
 
 
 class MoveEvent(AgentEvent):
