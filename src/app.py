@@ -10,8 +10,8 @@ from pysim.graphics.primitives.primitive import Primitive
 from pysim.gui.mainwindow import MainWindow
 from pysim.gui.screen import Screen
 from pysim.settings import settings
+from pysim.simulation.animator import Animator
 from pysim.simulation.entities.agent import Agent
-from pysim.simulation.events.sequence import EventSequence
 from pysim.simulation.simulation import Simulation, Simulator
 from pysim.simulation.world import Tile, Wall, Empty, World
 
@@ -69,10 +69,11 @@ def create_world() -> World:
 def create_animation(world: World):
     agent = Agent(Vector(2, 2), NORTH)
     simulation = Simulation(world, agent)
-    settings = Settings()
-    events = Simulator(simulation). \
-        forward().forward().turn_left().forward().forward().turn_left().forward().forward().events
-    return EventSequence(events).animate(settings)
+    animator = Animator(Settings())
+    for event in Simulator(
+            simulation).forward().forward().turn_left().forward().forward().turn_left().forward().forward().events:
+        animator.add(event)
+    return animator.render()
 
 
 def main():
