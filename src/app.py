@@ -14,13 +14,11 @@ from pysim.simulation.events.sequence import EventSequence
 from pysim.simulation.simulation import Simulation
 from pysim.simulation.world import Tile, Wall, Empty, World
 
-tile_size = 64
-
 
 class Settings(AnimationSettings):
     @property
     def tile_size(self) -> float:
-        return tile_size
+        return settings['tile_size']
 
     def tile_rectangle(self, position: Vector) -> pygame.Rect:
         x, y = position
