@@ -10,7 +10,7 @@ from pysim.graphics.primitives.primitive import Primitive
 from pysim.gui.mainwindow import MainWindow
 from pysim.gui.screen import Screen
 from pysim.settings import settings
-from pysim.simulation.agent import Agent
+from pysim.simulation.entities.agent import Agent
 from pysim.simulation.events.sequence import EventSequence
 from pysim.simulation.simulation import Simulation, Simulator
 from pysim.simulation.world import Tile, Wall, Empty, World

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List, Tuple
 
-from pysim.simulation.agent import Agent, BumpEvent
+from pysim.simulation.entities.agent import Agent, BumpEvent
 from pysim.simulation.events.event import Event
 from pysim.simulation.events.parallel import ParallelEvents
 from pysim.simulation.world import World, Wall
