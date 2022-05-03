@@ -68,14 +68,34 @@ class Simulation:
     def backward(self) -> Tuple[Simulation, Event]:
         world = self.world
         agent = self.agent
-        new_agent, event = agent.backward()
-        destination_tile = world[new_agent.position]
-        if isinstance(destination_tile, Wall):
+        new_agent, agent_event = agent.backward()
+        destination = new_agent.position
+        if self.__contains_wall(destination):
             bump_event = BumpEvent(agent.position, agent.orientation)
-            return (self, bump_event)
+            entity_events = [e.stay() for e in self.__entities]
+            packed = self.__pack_events([bump_event, *entity_events])
+            return (self, packed)
+        elif self.__contains_block(destination):
+            position_beyond_block = agent.position - Vector.from_orientation(agent.orientation) * 2
+            if self.__is_free(position_beyond_block):
+                entity_at_position, other_entities = self.__extract_entity_at(destination)
+                block = cast(Block, entity_at_position)
+                new_block, block_event = block.move(agent.orientation.turn_around())
+                new_entities = [new_block, *other_entities]
+                new_state = Simulation(world, new_agent, new_entities)
+                other_entity_events = [e.stay() for e in other_entities]
+                combined_event = ParallelEvents([agent_event, block_event, *other_entity_events])
+                return (new_state, combined_event)
+            else:
+                bump_event = BumpEvent(agent.position, agent.orientation)
+                entity_events = [e.stay() for e in self.__entities]
+                packed = self.__pack_events([bump_event, *entity_events])
+                return (self, packed)
         else:
             new_state = Simulation(world, new_agent, self.__entities)
-            return (new_state, event)
+            entity_events = [e.stay() for e in self.__entities]
+            packed = self.__pack_events([agent_event, *entity_events])
+            return (new_state, packed)
 
     def turn_left(self) -> Tuple[Simulation, Event]:
         world = self.world
