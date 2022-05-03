@@ -20,7 +20,7 @@ class Empty(Tile):
 
 class Wall(Tile):
     def render(self, surface: Surface, rect: Rect) -> None:
-        color = (64, 64, 64)
+        color = (0, 0, 0)
         draw.rect(surface, color, rect)
 
 

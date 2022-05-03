@@ -12,6 +12,7 @@ from pysim.gui.screen import Screen
 from pysim.settings import settings
 from pysim.simulation.animator import Animator
 from pysim.simulation.entities.agent import Agent
+from pysim.simulation.entities.block import Block
 from pysim.simulation.simulation import Simulation, Simulator
 from pysim.simulation.world import Tile, Wall, Empty, World
 
@@ -35,9 +36,9 @@ class TestScreen(Screen):
     __total_time: float
     __world: World
 
-    def __init__(self, world: World, animation: Animation[Primitive]):
-        self.__world = world
-        self.__animation = animation
+    def __init__(self, simulation: Simulation):
+        self.__world = simulation.world
+        self.__animation = create_animation(simulation)
         self.__total_time = 0
 
     def update(self, elapsed_seconds: float) -> None:
@@ -57,29 +58,31 @@ class TestScreen(Screen):
         self.__world.render(surface, Settings())
 
 
-def create_world() -> World:
+def create_simulation() -> Simulation:
     width = 10
     height = 10
     grid: Grid[MutableCell[Tile]] = Grid(width, height, lambda p: MutableCell[Tile](Empty()))
     grid[Vector(0, 0)].value = Wall()
     world = World(Grid[Tile](width, height, lambda p: grid[p].value))
-    return world
-
-
-def create_animation(world: World):
+    entities = [
+        Block(Vector(1, 2))
+    ]
     agent = Agent(Vector(2, 2), NORTH)
-    simulation = Simulation(world, agent)
+    return Simulation(world, agent, entities)
+
+
+def create_animation(simulation: Simulation):
     animator = Animator(Settings())
-    for event in Simulator(
-            simulation).forward().forward().turn_left().forward().forward().turn_left().forward().forward().events:
+    for event in Simulator(simulation). \
+            forward().forward().turn_left().forward().forward().turn_left().forward().forward().events:
         animator.add(event)
     return animator.render()
 
 
 def main():
     pygame.init()
-    world = create_world()
-    screen = TestScreen(world, create_animation(world))
+    simulation = create_simulation()
+    screen = TestScreen(simulation)
     window = MainWindow(screen)
     window.run()
 
