@@ -20,9 +20,9 @@ class _GlobalSettings:
     def __create_default_settings() -> Settings:
         return DictionarySettings({
             'show_fps': False,
-            'max_fps': 0,
-            'speedup': 0.1,
-            'tile_size': 64,
+            'max_fps': 75,
+            'speedup': 4,
+            'tile_size': 128,
             'explosion_particles': 20
         })
 
