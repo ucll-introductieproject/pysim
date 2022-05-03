@@ -149,3 +149,7 @@ class Agent(Entity):
         new_agent = Agent(self.__position, self.__orientation.turn_right())
         event = TurnRightEvent(self.__position, self.__orientation)
         return (new_agent, event)
+
+    def stay(self) -> Event:
+        event = StayEvent(self.__position, self.__orientation)
+        return event
