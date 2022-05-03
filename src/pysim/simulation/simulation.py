@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from typing import List, Tuple
 
-from pysim.simulation.agent import Agent
+from pysim.simulation.agent import Agent, BumpEvent
 from pysim.simulation.events.event import Event
-from pysim.simulation.events.movement import TurnLeftEvent, ForwardEvent, BackwardEvent, TurnRightEvent, BumpEvent
 from pysim.simulation.events.parallel import ParallelEvents
 from pysim.simulation.world import World, Wall
 
@@ -28,41 +27,39 @@ class Simulation:
     def forward(self) -> Tuple[Simulation, Event]:
         world = self.world
         agent = self.agent
-        new_agent = agent.forward()
+        new_agent, event = agent.forward()
         destination_tile = world[new_agent.position]
         if isinstance(destination_tile, Wall):
-            return (self, BumpEvent(agent.position, agent.orientation))
+            bump_event = BumpEvent(agent.position, agent.orientation)
+            return (self, bump_event)
         else:
-            event = ForwardEvent(agent.position, agent.orientation)
             new_state = Simulation(world, new_agent)
             return (new_state, event)
 
     def backward(self) -> Tuple[Simulation, Event]:
         world = self.world
         agent = self.agent
-        new_agent = agent.backward()
+        new_agent, event = agent.backward()
         destination_tile = world[new_agent.position]
         if isinstance(destination_tile, Wall):
-            return (self, BumpEvent(agent.position, agent.orientation))
+            bump_event = BumpEvent(agent.position, agent.orientation)
+            return (self, bump_event)
         else:
-            event = BackwardEvent(agent.position, agent.orientation)
             new_state = Simulation(world, new_agent)
             return (new_state, event)
 
     def turn_left(self) -> Tuple[Simulation, Event]:
         world = self.world
         agent = self.agent
-        new_agent = agent.turn_left()
+        new_agent, event = agent.turn_left()
         new_state = Simulation(world, new_agent)
-        event = TurnLeftEvent(agent.position, agent.orientation)
         return (new_state, event)
 
     def turn_right(self) -> Tuple[Simulation, Event]:
         world = self.world
         agent = self.agent
-        new_agent = agent.turn_right()
+        new_agent, event = agent.turn_right()
         new_state = Simulation(world, new_agent)
-        event = TurnRightEvent(agent.position, agent.orientation)
         return (new_state, event)
 
     def __pack_events(self, events: List[Event]) -> Event:
