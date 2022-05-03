@@ -36,52 +36,20 @@ def test_4ccw_eq_id(x, y):
 
 @mark.parametrize('vector, expected', [
     (
-        Vector(0, 0),
-        Vector(0, 0)
+            Vector.from_orientation(NORTH),
+            Vector.from_orientation(EAST),
     ),
     (
-        NORTH,
-        EAST,
+            Vector.from_orientation(EAST),
+            Vector.from_orientation(SOUTH),
     ),
     (
-        EAST,
-        SOUTH,
+            Vector.from_orientation(SOUTH),
+            Vector.from_orientation(WEST),
     ),
     (
-        SOUTH,
-        WEST,
-    ),
-    (
-        WEST,
-        NORTH,
-    ),
-    (
-        Vector(1, 1),
-        Vector(1, -1)
-    ),
-    (
-        Vector(1, -1),
-        Vector(-1, -1)
-    ),
-    (
-        Vector(-1, -1),
-        Vector(-1, 1)
-    ),
-    (
-        Vector(5, 0),
-        Vector(0, -5)
-    ),
-    (
-        Vector(-5, 0),
-        Vector(0, 5)
-    ),
-    (
-        Vector(0, 3),
-        Vector(3, 0)
-    ),
-    (
-        Vector(0, -3),
-        Vector(-3, 0)
+            Vector.from_orientation(WEST),
+            Vector.from_orientation(NORTH),
     ),
 ])
 def test_cw_rotation(vector, expected):

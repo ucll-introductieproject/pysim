@@ -34,12 +34,12 @@ class Vector:
     def y(self) -> int:
         return self.__y
 
-    def rotate_clockwise(self) -> Vector:
+    def rotate_counterclockwise(self) -> Vector:
         x = self.__y
         y = -self.__x
         return Vector(x, y)
 
-    def rotate_counterclockwise(self) -> Vector:
+    def rotate_clockwise(self) -> Vector:
         x = -self.__y
         y = self.__x
         return Vector(x, y)
