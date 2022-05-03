@@ -81,3 +81,6 @@ class Block(Entity):
         new_block = Block(new_position)
         event = MoveEvent(self.__position, displacement)
         return (new_block, event)
+
+    def stay(self) -> Event:
+        return StayEvent(self.__position)
