@@ -52,18 +52,17 @@ class _CarBuilder:
         width, height = size
         wheel_width = width * 0.3
         wheel_height = height * 0.15
-        center = Vector2(width / 2, height / 2)
-        return (_CarBuilder.__create_wheel(center - Vector2(a * (width * 0.4 - wheel_width / 2),
-                                                            b * (height * 0.5 - wheel_height / 2)),
-                                           (wheel_width, wheel_height))
-                for a in [-1, 1]
-                for b in [-1, 1])
+        wheel_size = (wheel_width, wheel_height)
+        yield _CarBuilder.__create_wheel(Vector2(0.25 * width - wheel_width / 2, 0), wheel_size)
+        yield _CarBuilder.__create_wheel(Vector2(0.25 * width - wheel_width / 2, height - wheel_height), wheel_size)
+        yield _CarBuilder.__create_wheel(Vector2(0.75 * width - wheel_width / 2, 0), wheel_size)
+        yield _CarBuilder.__create_wheel(Vector2(0.75 * width - wheel_width / 2, height - wheel_height), wheel_size)
 
     @staticmethod
     def __create_wheel(position: Vector2, size: Tuple[float, float]) -> Primitive:
         width, height = size
-        left = position.x - width / 2
-        top = position.y - height / 2
+        left = position.x
+        top = position.y
         rect = Rect(left, top, width, height)
         color = Color(0, 0, 0)
         return Rectangle(rect, color)
