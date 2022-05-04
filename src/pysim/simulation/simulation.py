@@ -10,6 +10,8 @@ from pysim.simulation.events.event import Event
 from pysim.simulation.events.parallel import ParallelEvents
 from pysim.simulation.world import World, Wall
 
+from src.pysim.simulation.world import Chasm
+
 
 class Simulation:
     __world: World
@@ -123,6 +125,9 @@ class Simulation:
 
     def __contains_wall(self, position: Vector) -> bool:
         return isinstance(self.__world[position], Wall)
+
+    def __contains_chasm(self, position: Vector) -> bool:
+        return isinstance(self.__world[position], Chasm)
 
     def __contains_block(self, position: Vector) -> bool:
         return any(e.position == position and isinstance(e, Block) for e in self.__entities)
