@@ -65,7 +65,7 @@ def create_simulation() -> Simulation:
     grid[Vector(0, 0)].value = Wall()
     world = World(Grid[Tile](width, height, lambda p: grid[p].value))
     entities = [
-        Block(Vector(1, 2))
+        Block(Vector(1, 3))
     ]
     agent = Agent(Vector(2, 2), NORTH)
     return Simulation(world, agent, entities)
@@ -73,14 +73,11 @@ def create_simulation() -> Simulation:
 
 def create_animation(simulation: Simulation):
     animator = Animator(simulation, Settings())
-    animator.forward()
-    animator.forward()
     animator.turn_left()
     animator.forward()
-    animator.forward()
-    animator.turn_left()
-    animator.forward()
-    animator.forward()
+    animator.turn_right()
+    animator.backward()
+    animator.backward()
     return animator.build_animation()
 
 
