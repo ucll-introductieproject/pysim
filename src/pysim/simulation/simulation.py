@@ -41,10 +41,7 @@ class Simulation:
         new_agent, agent_event = agent.forward()
         destination = new_agent.position
         if self.__contains_wall(destination):
-            bump_event = BumpEvent(agent.position, agent.orientation)
-            entity_events = [e.stay() for e in self.__entities]
-            packed = self.__pack_events([bump_event, *entity_events])
-            return (self, packed)
+            return self.__bump()
         elif self.__contains_block(destination):
             position_beyond_block = agent.position + Vector.from_orientation(agent.orientation) * 2
             if self.__is_free(position_beyond_block):
@@ -57,15 +54,19 @@ class Simulation:
                 combined_event = ParallelEvents([agent_event, block_event, *other_entity_events])
                 return (new_state, combined_event)
             else:
-                bump_event = BumpEvent(agent.position, agent.orientation)
-                entity_events = [e.stay() for e in self.__entities]
-                packed = self.__pack_events([bump_event, *entity_events])
-                return (self, packed)
+                return self.__bump()
         else:
             new_state = Simulation(world, new_agent, self.__entities)
             entity_events = [e.stay() for e in self.__entities]
             packed = self.__pack_events([agent_event, *entity_events])
             return (new_state, packed)
+
+    def __bump(self) -> Tuple[Simulation, Event]:
+        agent = self.agent
+        bump_event = BumpEvent(agent.position, agent.orientation)
+        entity_events = [e.stay() for e in self.__entities]
+        packed = self.__pack_events([bump_event, *entity_events])
+        return (self, packed)
 
     def backward(self) -> Tuple[Simulation, Event]:
         world = self.world
