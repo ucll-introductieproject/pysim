@@ -8,8 +8,7 @@ from pysim.simulation.entities.block import Block
 from pysim.simulation.entities.entity import Entity
 from pysim.simulation.events.event import Event
 from pysim.simulation.events.parallel import ParallelEvents
-from pysim.simulation.world import World, Wall
-
+from pysim.simulation.world import World, Wall, Empty
 from src.pysim.simulation.world import Chasm
 
 
@@ -36,13 +35,25 @@ class Simulation:
         return self.__entities
 
     def forward(self) -> Tuple[Simulation, Event]:
-        world = self.world
         agent = self.agent
         new_agent, agent_event = agent.forward()
         destination = new_agent.position
         if self.__contains_wall(destination):
-            return self.__bump()
-        elif self.__contains_block(destination):
+            return self.__forward_to_wall()
+        elif self.__contains_empty(destination):
+            return self.__forward_to_empty()
+        else:
+            assert False
+
+    def __forward_to_wall(self) -> Tuple[Simulation, Event]:
+        return self.__bump()
+
+    def __forward_to_empty(self) -> Tuple[Simulation, Event]:
+        agent = self.agent
+        new_agent, agent_event = agent.forward()
+        destination = new_agent.position
+        world = self.__world
+        if self.__contains_block(destination):
             position_beyond_block = agent.position + Vector.from_orientation(agent.orientation) * 2
             if self.__is_free(position_beyond_block):
                 entity_at_position, other_entities = self.__extract_entity_at(destination)
@@ -126,6 +137,9 @@ class Simulation:
 
     def __contains_wall(self, position: Vector) -> bool:
         return isinstance(self.__world[position], Wall)
+
+    def __contains_empty(self, position: Vector) -> bool:
+        return isinstance(self.__world[position], Empty)
 
     def __contains_chasm(self, position: Vector) -> bool:
         return isinstance(self.__world[position], Chasm)
