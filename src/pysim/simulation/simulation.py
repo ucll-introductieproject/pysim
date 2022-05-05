@@ -44,8 +44,7 @@ class Simulation:
         if self.__contains_wall(destination):
             return self.__bump()
         elif self.__contains_block(destination):
-            position_beyond_block = agent.position + Vector.from_orientation(agent.orientation) * 2
-            if self.__is_free(position_beyond_block):
+            if self.__can_push_block(destination, agent.orientation):
                 entity_at_position, other_entities = self.__extract_entity_at(destination)
                 block = cast(Block, entity_at_position)
                 new_block, block_event = block.move(agent.orientation)
@@ -61,6 +60,12 @@ class Simulation:
             entity_events = [e.stay() for e in self.__entities]
             packed = self.__pack_events([agent_event, *entity_events])
             return (new_state, packed)
+
+    def __can_push_block(self, block_position: Vector, orientation: Orientation) -> bool:
+        position_beyond_block = block_position.move(orientation)
+        if self.__contains_wall(position_beyond_block):
+            return False
+        return self.__is_free(position_beyond_block)
 
     def __bump(self) -> Tuple[Simulation, Event]:
         agent = self.agent
