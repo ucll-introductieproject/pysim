@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Tuple, cast
+from typing import List, Tuple, cast, Type
 
 from pysim.data import Vector
 from pysim.simulation.entities.agent import Agent, BumpEvent
@@ -10,7 +10,8 @@ from pysim.simulation.events.event import Event
 from pysim.simulation.events.parallel import ParallelEvents
 from pysim.simulation.world import World, Wall
 
-from src.pysim.simulation.world import Chasm
+from src.pysim.data.orientation import Orientation
+from src.pysim.simulation.world import Chasm, Empty
 
 
 class Simulation:
@@ -124,11 +125,17 @@ class Simulation:
         else:
             return ParallelEvents(events)
 
+    def __contains_tile_of_type(self, position: Vector, tile_type: Type):
+        return isinstance(self.__world[position], tile_type)
+
+    def __contains_empty(self, position: Vector) -> bool:
+        return self.__contains_tile_of_type(position, Empty)
+
     def __contains_wall(self, position: Vector) -> bool:
-        return isinstance(self.__world[position], Wall)
+        return self.__contains_tile_of_type(position, Wall)
 
     def __contains_chasm(self, position: Vector) -> bool:
-        return isinstance(self.__world[position], Chasm)
+        return self.__contains_tile_of_type(position, Chasm)
 
     def __contains_block(self, position: Vector) -> bool:
         return any(e.position == position and isinstance(e, Block) for e in self.__entities)
