@@ -10,8 +10,8 @@ from pysim.simulation.events.event import Event
 from pysim.simulation.events.parallel import ParallelEvents
 from pysim.simulation.world import World, Wall
 
-from src.pysim.data.orientation import Orientation
-from src.pysim.simulation.world import Chasm, Empty
+from pysim.data.orientation import Orientation
+from pysim.simulation.world import Chasm, Empty
 
 
 class Simulation:
