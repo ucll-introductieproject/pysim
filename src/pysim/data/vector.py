@@ -70,3 +70,6 @@ class Vector:
     def __iter__(self) -> Iterable[int]:
         yield self.x
         yield self.y
+
+    def move(self, orientation: Orientation, distance : int = 1) -> Vector:
+        return self + Vector.from_orientation(orientation) * distance
