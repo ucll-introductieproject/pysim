@@ -71,5 +71,5 @@ class Vector:
         yield self.x
         yield self.y
 
-    def move(self, orientation: Orientation, distance : int = 1) -> Vector:
+    def move(self, orientation: Orientation, distance: int = 1) -> Vector:
         return self + Vector.from_orientation(orientation) * distance
