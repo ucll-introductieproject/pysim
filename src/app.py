@@ -14,7 +14,7 @@ from pysim.simulation.animator import Animator
 from pysim.simulation.entities.agent import Agent
 from pysim.simulation.entities.block import Block
 from pysim.simulation.simulation import Simulation
-from pysim.simulation.world import Tile, Wall, Empty, World
+from pysim.simulation.world import Tile, Wall, Empty, World, Chasm
 
 
 class Settings(GraphicsSettings):
@@ -63,6 +63,8 @@ def create_simulation() -> Simulation:
     height = 10
     grid: Grid[MutableCell[Tile]] = Grid(width, height, lambda p: MutableCell[Tile](Empty()))
     grid[Vector(0, 0)].value = Wall()
+    grid[Vector(2, 1)].value = Chasm()
+    grid[Vector(1, 4)].value = Chasm()
     world = World(Grid[Tile](width, height, lambda p: grid[p].value))
     entities = [
         Block(Vector(1, 3))
@@ -75,9 +77,9 @@ def create_animation(simulation: Simulation):
     animator = Animator(simulation, Settings())
     animator.turn_left()
     animator.forward()
-    animator.turn_right()
-    animator.backward()
-    animator.backward()
+    animator.turn_left()
+    animator.forward()
+    animator.forward()
     return animator.build_animation()
 
 

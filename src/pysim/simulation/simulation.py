@@ -8,8 +8,7 @@ from pysim.simulation.entities.block import Block
 from pysim.simulation.entities.entity import Entity
 from pysim.simulation.events.event import Event
 from pysim.simulation.events.parallel import ParallelEvents
-from pysim.simulation.world import World, Wall, Empty
-from src.pysim.simulation.world import Chasm
+from pysim.simulation.world import World, Wall, Empty, Chasm
 
 
 class Simulation:
@@ -42,8 +41,19 @@ class Simulation:
             return self.__forward_to_wall()
         elif self.__contains_empty(destination):
             return self.__forward_to_empty()
+        elif self.__contains_chasm(destination):
+            return self.__forward_to_chasm()
         else:
             assert False
+
+    def __forward_to_chasm(self) -> Tuple[Simulation, Event]:
+        agent = self.agent
+        new_agent, agent_event = agent.forward()
+        destination = new_agent.position
+        if self.__contains_block(destination):
+            return self.___move_forward_unhindered()
+        else:
+            return self.__forward_to_wall()
 
     def __forward_to_wall(self) -> Tuple[Simulation, Event]:
         return self.__bump()
@@ -67,10 +77,16 @@ class Simulation:
             else:
                 return self.__bump()
         else:
-            new_state = Simulation(world, new_agent, self.__entities)
-            entity_events = [e.stay() for e in self.__entities]
-            packed = self.__pack_events([agent_event, *entity_events])
-            return (new_state, packed)
+            return self.___move_forward_unhindered()
+
+    def ___move_forward_unhindered(self) -> Tuple[Simulation, Event]:
+        agent = self.agent
+        new_agent, agent_event = agent.forward()
+        world = self.__world
+        new_state = Simulation(world, new_agent, self.__entities)
+        entity_events = [e.stay() for e in self.__entities]
+        packed = self.__pack_events([agent_event, *entity_events])
+        return (new_state, packed)
 
     def __bump(self) -> Tuple[Simulation, Event]:
         agent = self.agent
@@ -142,7 +158,9 @@ class Simulation:
         return isinstance(self.__world[position], Empty)
 
     def __contains_chasm(self, position: Vector) -> bool:
-        return isinstance(self.__world[position], Chasm)
+        tile = self.__world[position]
+        result = isinstance(tile, Chasm)
+        return result
 
     def __contains_block(self, position: Vector) -> bool:
         return any(e.position == position and isinstance(e, Block) for e in self.__entities)
