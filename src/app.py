@@ -6,6 +6,9 @@ from pysim.data.orientation import NORTH
 from pysim.data.vector import Vector
 from pysim.graphics.animations.animation import Animation
 from pysim.graphics.graphics_settings import GraphicsSettings
+from pysim.graphics.layer import Layer
+from pysim.graphics.primitives.car import create_car
+from pysim.graphics.primitives.image import Image
 from pysim.graphics.primitives.primitive import Primitive
 from pysim.gui.mainwindow import MainWindow
 from pysim.gui.screen import Screen
@@ -18,6 +21,24 @@ from pysim.simulation.world import Tile, Wall, Empty, World, Chasm
 
 
 class Settings(GraphicsSettings):
+    __entity_layer: Layer
+    __agent_layer: Layer
+    __car: Image
+
+    def __init__(self):
+        self.__entity_layer = Layer()
+        self.__agent_layer = Layer()
+        color = pygame.Color(255, 0, 0)
+        self.__car = create_car(self.__agent_layer, color, self.tile_size)
+
+    @property
+    def entity_layer(self) -> Layer:
+        return self.__entity_layer
+
+    @property
+    def agent_layer(self) -> Layer:
+        return self.__agent_layer
+
     @property
     def tile_size(self) -> float:
         return settings['tile_size']
@@ -30,16 +51,22 @@ class Settings(GraphicsSettings):
         height = self.tile_size
         return pygame.Rect(left, top, width, height)
 
+    @property
+    def agent(self) -> Image:
+        return self.__car
+
 
 class TestScreen(Screen):
     __animation: Animation[Primitive]
     __total_time: float
     __world: World
+    __context: GraphicsSettings
 
-    def __init__(self, simulation: Simulation):
+    def __init__(self, simulation: Simulation, context: GraphicsSettings):
         self.__world = simulation.world
-        self.__animation = create_animation(simulation)
+        self.__animation = create_animation(context, simulation)
         self.__total_time = 0
+        self.__context = context
 
     def update(self, elapsed_seconds: float) -> None:
         self.__total_time += elapsed_seconds * settings['speedup']
@@ -47,7 +74,9 @@ class TestScreen(Screen):
     def render(self, surface: pygame.Surface) -> None:
         TestScreen.__clear_screen(surface)
         self.__render_world(surface)
-        return self.__animation[self.__total_time].render(surface)
+        primitive = self.__animation[self.__total_time]
+        primitive.render(surface, self.__context.entity_layer)
+        primitive.render(surface, self.__context.agent_layer)
 
     @staticmethod
     def __clear_screen(surface: pygame.Surface) -> None:
@@ -55,7 +84,7 @@ class TestScreen(Screen):
         surface.fill(color)
 
     def __render_world(self, surface: pygame.Surface) -> None:
-        self.__world.render(surface, Settings())
+        self.__world.render(surface, self.__context)
 
 
 def create_simulation() -> Simulation:
@@ -73,8 +102,8 @@ def create_simulation() -> Simulation:
     return Simulation(world, agent, entities)
 
 
-def create_animation(simulation: Simulation):
-    animator = Animator(simulation, Settings())
+def create_animation(context: GraphicsSettings, simulation: Simulation):
+    animator = Animator(simulation, context)
     animator.turn_left()
     animator.forward()
     animator.turn_left()
@@ -85,8 +114,9 @@ def create_animation(simulation: Simulation):
 
 def main():
     pygame.init()
+    context = Settings()
     simulation = create_simulation()
-    screen = TestScreen(simulation)
+    screen = TestScreen(simulation, context)
     window = MainWindow(screen)
     window.run()
 

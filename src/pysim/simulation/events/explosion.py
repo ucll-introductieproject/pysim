@@ -19,4 +19,4 @@ class ExplosionEvent(Event):
         n_particles = settings['explosion_particles']
         position = Vector2(animation_settings.tile_rectangle(self.__position).center)
         duration = 1
-        return Explosion(n_particles, position, duration)
+        return Explosion(animation_settings.entity_layer, n_particles, position, duration)

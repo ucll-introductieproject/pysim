@@ -3,15 +3,14 @@ from __future__ import annotations
 from typing import List, Tuple, cast, Type
 
 from pysim.data import Vector
+from pysim.data.orientation import Orientation
 from pysim.simulation.entities.agent import Agent, BumpEvent
 from pysim.simulation.entities.block import Block
 from pysim.simulation.entities.entity import Entity
 from pysim.simulation.events.event import Event
 from pysim.simulation.events.parallel import ParallelEvents
-from pysim.simulation.world import World, Wall, Empty, Chasm
-
-from pysim.data.orientation import Orientation
 from pysim.simulation.world import Chasm, Empty
+from pysim.simulation.world import World, Wall
 
 
 class Simulation:
@@ -199,7 +198,7 @@ class Simulation:
     def __replace_entity(self, entities: List[Entity], entity: Entity, new_entity: Entity) -> List[Entity]:
         return [
             new_entity,
-            *(e for e in self.__entities if e is not entity)
+            *(e for e in entities if e is not entity)
         ]
 
 

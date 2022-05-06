@@ -5,6 +5,7 @@ from pygame import Vector2, Color
 
 from pysim.graphics.animations.animation import Animation
 from pysim.graphics.animations.particle import Particle
+from pysim.graphics.layer import Layer
 from pysim.graphics.primitives.operations import UnionPrimitive
 from pysim.graphics.primitives.primitive import Primitive
 
@@ -13,7 +14,7 @@ class Explosion(Animation[Primitive]):
     __particles: List[Particle]
     __duration: float
 
-    def __init__(self, n_particles: int, position: Vector2, duration: float):
+    def __init__(self, layer: Layer, n_particles: int, position: Vector2, duration: float):
         def random_particle() -> Particle:
             rnd = Random()
             speed = rnd.uniform(50, 100)
@@ -25,7 +26,7 @@ class Explosion(Animation[Primitive]):
             g = rnd.randint(0, 200)
             b = 0
             color = Color(r, g, b)
-            return Particle(position, velocity, size, duration, color)
+            return Particle(layer, position, velocity, size, duration, color)
 
         self.__duration = duration
         self.__particles = [random_particle() for _ in range(n_particles)]

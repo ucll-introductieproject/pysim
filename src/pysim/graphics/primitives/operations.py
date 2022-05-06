@@ -2,6 +2,7 @@ from typing import List
 
 import pygame
 
+from pysim.graphics.layer import Layer
 from pysim.graphics.primitives.primitive import Primitive
 
 
@@ -12,6 +13,6 @@ class UnionPrimitive(Primitive):
         assert len(children) >= 1
         self.__children = children
 
-    def render(self, surface: pygame.Surface) -> None:
+    def render(self, surface: pygame.Surface, layer: Layer) -> None:
         for child in self.__children:
-            child.render(surface)
+            child.render(surface, layer)

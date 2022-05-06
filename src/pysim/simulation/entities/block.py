@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import abstractmethod
 from typing import Tuple
 
 from pygame import Vector2, Color, Rect
@@ -11,6 +12,7 @@ from pysim.graphics.animations.constant import ConstantAnimation
 from pysim.graphics.animations.float import LinearFloatAnimation
 from pysim.graphics.animations.function import FunctionAnimation
 from pysim.graphics.graphics_settings import GraphicsSettings
+from pysim.graphics.layer import Layer
 from pysim.graphics.primitives.primitive import Primitive
 from pysim.graphics.primitives.shapes import Rectangle
 from pysim.simulation.entities.entity import Entity
@@ -18,12 +20,16 @@ from pysim.simulation.events.event import Event
 
 
 class BlockEvent(Event):
-    def _render_block(self, position: Vector2, size: float) -> Primitive:
+    @abstractmethod
+    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
+        ...
+
+    def _render_block(self, layer: Layer, position: Vector2, size: float) -> Primitive:
         left = position.x - size / 2
         top = position.y - size / 2
         rect = Rect(left, top, size, size)
         color = Color(128, 128, 128)
-        return Rectangle(rect, color)
+        return Rectangle(layer, rect, color)
 
 
 class StayEvent(BlockEvent):
@@ -35,7 +41,7 @@ class StayEvent(BlockEvent):
     def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
         position = Vector2(settings.tile_rectangle(self.__position).center)
         size = settings.tile_size * 0.9
-        primitive = self._render_block(position, size)
+        primitive = self._render_block(settings.entity_layer, position, size)
         return ConstantAnimation[Primitive](primitive, 1)
 
 
@@ -54,7 +60,7 @@ class MoveEvent(BlockEvent):
             return Vector2(x, y)
 
         def compute_primitive(position: Vector2) -> Primitive:
-            return self._render_block(position, size)
+            return self._render_block(settings.entity_layer, position, size)
 
         size = settings.tile_size * 0.9
         sx, sy = settings.tile_rectangle(self.__start).center
