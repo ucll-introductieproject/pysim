@@ -17,7 +17,8 @@ from pysim.simulation.animator import Animator
 from pysim.simulation.entities.agent import Agent
 from pysim.simulation.entities.block import Block
 from pysim.simulation.simulation import Simulation
-from pysim.simulation.world import Tile, Wall, Empty, World, Chasm
+from pysim.simulation.tiles import Tile, Wall, Empty, Chasm
+from pysim.simulation.world import World
 
 
 class Context(GraphicsContext):

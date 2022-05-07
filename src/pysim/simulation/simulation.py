@@ -9,8 +9,8 @@ from pysim.simulation.entities.block import Block
 from pysim.simulation.entities.entity import Entity
 from pysim.simulation.events.event import Event
 from pysim.simulation.events.parallel import ParallelEvents
-from pysim.simulation.world import Chasm, Empty
-from pysim.simulation.world import World, Wall
+from pysim.simulation.tiles import Chasm, Empty, Wall
+from pysim.simulation.world import World
 
 
 class Simulation:

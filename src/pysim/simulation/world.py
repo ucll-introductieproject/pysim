@@ -1,33 +1,8 @@
-from abc import ABC, abstractmethod
-
-from pygame import Rect, Surface, draw
+from pygame import Surface
 
 from pysim.data import Grid, Vector
 from pysim.graphics.graphics_settings import GraphicsContext
-
-
-class Tile(ABC):
-    @abstractmethod
-    def render(self, surface: Surface, rect: Rect) -> None:
-        ...
-
-
-class Empty(Tile):
-    def render(self, surface: Surface, rect: Rect) -> None:
-        color = (255, 255, 255)
-        draw.rect(surface, color, rect)
-
-
-class Wall(Tile):
-    def render(self, surface: Surface, rect: Rect) -> None:
-        color = (0, 0, 0)
-        draw.rect(surface, color, rect)
-
-
-class Chasm(Tile):
-    def render(self, surface: Surface, rect: Rect) -> None:
-        color = (0, 0, 255)
-        draw.rect(surface, color, rect)
+from pysim.simulation.tiles import Tile
 
 
 class World:
