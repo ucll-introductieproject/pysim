@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Tuple
+from typing import Tuple, Any
 
 from pygame import Vector2, Color, Rect
 
@@ -90,3 +90,6 @@ class Block(Entity):
 
     def stay(self) -> Event:
         return StayEvent(self.__position)
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, Block) and self.position == other.position
