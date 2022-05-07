@@ -247,3 +247,53 @@ def test_push_block(str_start, str_end):
     actual, event = start.forward()
     assert actual.agent == expected.agent
     assert actual.entities == expected.entities
+
+
+@mark.parametrize("str_start, str_end", [
+    (
+            [
+                '<B.',
+            ],
+            [
+                '.<B',
+            ],
+    ),
+    (
+            [
+                '.B>',
+            ],
+            [
+                'B>.',
+            ],
+    ),
+    (
+            [
+                '.',
+                'B',
+                'v',
+            ],
+            [
+                'B',
+                'v',
+                '.',
+            ],
+    ),
+    (
+            [
+                '^',
+                'B',
+                '.',
+            ],
+            [
+                '.',
+                '^',
+                'B',
+            ],
+    ),
+])
+def test_push_block_backward(str_start, str_end):
+    start = parse_simulation(str_start)
+    expected = parse_simulation(str_end)
+    actual, event = start.backward()
+    assert actual.agent == expected.agent
+    assert actual.entities == expected.entities
