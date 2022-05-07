@@ -36,15 +36,41 @@ class Simulation:
         return self.__entities
 
     def forward(self) -> Tuple[Simulation, Event]:
+        def to_empty():
+            world = self.__world
+            if self.__contains_block(destination):
+                if self.__can_push_block(destination, agent.orientation):
+                    entity_at_position, other_entities = self.__extract_entity_at(destination)
+                    block = cast(Block, entity_at_position)
+                    new_block, block_event = block.move(agent.orientation)
+                    new_entities = [new_block, *other_entities]
+                    new_state = Simulation(world, new_agent, new_entities)
+                    other_entity_events = [e.stay() for e in other_entities]
+                    combined_event = ParallelEvents([agent_event, block_event, *other_entity_events])
+                    return (new_state, combined_event)
+                else:
+                    return self.__bump()
+            else:
+                return self.___move_forward_unhindered()
+
+        def to_wall():
+            return self.__bump()
+
+        def to_chasm():
+            if self.__contains_block(destination):
+                return self.___move_forward_unhindered()
+            else:
+                return self.__forward_to_wall()
+
         agent = self.agent
         new_agent, agent_event = agent.forward()
         destination = new_agent.position
         destination_tile = self.__world[destination]
         return match_tile(
             destination_tile,
-            if_empty=self.__forward_to_empty,
-            if_wall=self.__forward_to_wall,
-            if_chasm=self.__forward_to_chasm)
+            if_empty=to_empty,
+            if_wall=to_wall,
+            if_chasm=to_chasm)
 
     def __forward_to_chasm(self) -> Tuple[Simulation, Event]:
         agent = self.agent
