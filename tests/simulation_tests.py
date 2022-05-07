@@ -11,7 +11,7 @@ from pysim.simulation.tiles import Tile, Empty, Wall, Chasm
 from pysim.simulation.world import World
 
 
-def parse_world(rows: List[str]) -> Simulation:
+def parse_simulation(rows: List[str]) -> Simulation:
     def initialize(position: Vector) -> Tile:
         nonlocal agent
         x, y = position
@@ -88,8 +88,8 @@ def parse_world(rows: List[str]) -> Simulation:
     ),
 ])
 def test_forward(str_start, str_end):
-    start = parse_world(str_start)
-    expected = parse_world(str_end)
+    start = parse_simulation(str_start)
+    expected = parse_simulation(str_end)
     actual, events = start.forward()
     assert actual.agent == expected.agent
 
@@ -119,7 +119,7 @@ def test_forward(str_start, str_end):
     ),
 ])
 def test_forward_bump_into_wall(str_state):
-    start = parse_world(str_state)
+    start = parse_simulation(str_state)
     actual, events = start.forward()
     assert actual.agent == start.agent
 
@@ -163,8 +163,8 @@ def test_forward_bump_into_wall(str_state):
     ),
 ])
 def test_forward(str_start, str_end):
-    start = parse_world(str_start)
-    expected = parse_world(str_end)
+    start = parse_simulation(str_start)
+    expected = parse_simulation(str_end)
     actual, events = start.backward()
     assert actual.agent == expected.agent
 
@@ -194,7 +194,7 @@ def test_forward(str_start, str_end):
     ),
 ])
 def test_forward_bump_into_wall(str_state):
-    start = parse_world(str_state)
+    start = parse_simulation(str_state)
     actual, events = start.backward()
     assert actual.agent == start.agent
 
@@ -242,8 +242,8 @@ def test_forward_bump_into_wall(str_state):
     ),
 ])
 def test_push_block(str_start, str_end):
-    start = parse_world(str_start)
-    expected = parse_world(str_end)
+    start = parse_simulation(str_start)
+    expected = parse_simulation(str_end)
     actual, event = start.forward()
     assert actual.agent == expected.agent
     assert actual.entities == expected.entities
