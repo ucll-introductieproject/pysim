@@ -106,7 +106,7 @@ def test_forward(world, start_position, start_orientation, end_position):
             NORTH,
     ),
 ])
-def test_bump_into_wall(world, start_position, start_orientation):
+def test_forward_bump_into_wall(world, start_position, start_orientation):
     world = parse_world(world)
     agent = Agent(Vector(*start_position), start_orientation)
     entities = []
