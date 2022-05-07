@@ -174,11 +174,11 @@ class Simulation:
         return any(e.position == position and isinstance(e, Block) for e in self.__entities)
 
     def __is_free(self, position: Vector) -> bool:
-        '''
+        """
         Checks if there are no entities at the given position
         :param position: Position to check
         :return: True if no objects are present, False otherwise
-        '''
+        """
         return not any(e.position == position for e in self.__entities)
 
     def __get_entities_at(self, position: Vector) -> List[Entity]:
