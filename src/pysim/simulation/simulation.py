@@ -9,7 +9,7 @@ from pysim.simulation.entities.block import Block
 from pysim.simulation.entities.entity import Entity
 from pysim.simulation.events.event import Event
 from pysim.simulation.events.parallel import ParallelEvents
-from pysim.simulation.tiles import Chasm, Empty, Wall
+from pysim.simulation.tiles import Chasm, Empty, Wall, match_tile
 from pysim.simulation.world import World
 
 
@@ -39,14 +39,12 @@ class Simulation:
         agent = self.agent
         new_agent, agent_event = agent.forward()
         destination = new_agent.position
-        if self.__contains_wall(destination):
-            return self.__forward_to_wall()
-        elif self.__contains_empty(destination):
-            return self.__forward_to_empty()
-        elif self.__contains_chasm(destination):
-            return self.__forward_to_chasm()
-        else:
-            assert False
+        destination_tile = self.__world[destination]
+        return match_tile(
+            destination_tile,
+            if_empty=self.__forward_to_empty,
+            if_wall=self.__forward_to_wall,
+            if_chasm=self.__forward_to_chasm)
 
     def __forward_to_chasm(self) -> Tuple[Simulation, Event]:
         agent = self.agent

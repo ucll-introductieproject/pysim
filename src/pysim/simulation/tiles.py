@@ -24,7 +24,7 @@ class Empty(Tile):
         draw.rect(surface, color, rect)
 
     def match(self, matcher: Matcher[T]) -> T:
-        return matcher.on_empty(self)
+        return matcher.on_empty()
 
 
 class Wall(Tile):
@@ -33,7 +33,7 @@ class Wall(Tile):
         draw.rect(surface, color, rect)
 
     def match(self, matcher: Matcher[T]) -> T:
-        return matcher.on_wall(self)
+        return matcher.on_wall()
 
 
 class Chasm(Tile):
@@ -42,36 +42,37 @@ class Chasm(Tile):
         draw.rect(surface, color, rect)
 
     def match(self, matcher: Matcher[T]) -> T:
-        return matcher.on_chasm(self)
+        return matcher.on_chasm()
 
 
 class Matcher(ABC, Generic[T]):
     @abstractmethod
-    def on_empty(self, tile: Empty) -> T:
+    def on_empty(self) -> T:
         ...
 
     @abstractmethod
-    def on_wall(self, tile: Wall) -> T:
+    def on_wall(self) -> T:
         ...
 
     @abstractmethod
-    def on_chasm(self, tile: Chasm) -> T:
+    def on_chasm(self) -> T:
         ...
 
 
 def match_tile(
         tile: Tile,
-        if_empty: Callable[[Empty], T],
-        if_wall: Callable[[Wall], T],
-        if_chasm: Callable[[Chasm], T]) -> T:
+        /,
+        if_empty: Callable[[], T],
+        if_wall: Callable[[], T],
+        if_chasm: Callable[[], T]) -> T:
     class M(Matcher):
-        def on_empty(self, tile: Empty) -> T:
-            return if_empty(tile)
+        def on_empty(self) -> T:
+            return if_empty()
 
-        def on_wall(self, tile: Wall) -> T:
-            return if_wall(tile)
+        def on_wall(self) -> T:
+            return if_wall()
 
-        def on_chasm(self, tile: Chasm) -> T:
-            return if_chasm(tile)
+        def on_chasm(self) -> T:
+            return if_chasm()
 
     return tile.match(M())
