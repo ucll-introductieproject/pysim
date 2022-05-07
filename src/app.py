@@ -5,7 +5,7 @@ from pysim.data.mutable_cell import MutableCell
 from pysim.data.orientation import NORTH
 from pysim.data.vector import Vector
 from pysim.graphics.animations.animation import Animation
-from pysim.graphics.graphics_settings import GraphicsSettings
+from pysim.graphics.graphics_settings import GraphicsContext
 from pysim.graphics.layer import Layer
 from pysim.graphics.primitives.car import create_car
 from pysim.graphics.primitives.image import Image
@@ -20,7 +20,7 @@ from pysim.simulation.simulation import Simulation
 from pysim.simulation.world import Tile, Wall, Empty, World, Chasm
 
 
-class Settings(GraphicsSettings):
+class Context(GraphicsContext):
     __entity_layer: Layer
     __agent_layer: Layer
     __car: Image
@@ -60,9 +60,9 @@ class TestScreen(Screen):
     __animation: Animation[Primitive]
     __total_time: float
     __world: World
-    __context: GraphicsSettings
+    __context: GraphicsContext
 
-    def __init__(self, simulation: Simulation, context: GraphicsSettings):
+    def __init__(self, simulation: Simulation, context: GraphicsContext):
         self.__world = simulation.world
         self.__animation = create_animation(context, simulation)
         self.__total_time = 0
@@ -102,7 +102,7 @@ def create_simulation() -> Simulation:
     return Simulation(world, agent, entities)
 
 
-def create_animation(context: GraphicsSettings, simulation: Simulation):
+def create_animation(context: GraphicsContext, simulation: Simulation):
     animator = Animator(simulation, context)
     animator.turn_left()
     animator.forward()
@@ -114,7 +114,7 @@ def create_animation(context: GraphicsSettings, simulation: Simulation):
 
 def main():
     pygame.init()
-    context = Settings()
+    context = Context()
     simulation = create_simulation()
     screen = TestScreen(simulation, context)
     window = MainWindow(screen)

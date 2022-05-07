@@ -7,7 +7,7 @@ from pysim.graphics.layer import Layer
 from pysim.graphics.primitives.image import Image
 
 
-class GraphicsSettings(ABC):
+class GraphicsContext(ABC):
     @property
     @abstractmethod
     def tile_size(self) -> float:

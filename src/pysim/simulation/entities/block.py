@@ -11,7 +11,7 @@ from pysim.graphics.animations.animation import Animation
 from pysim.graphics.animations.constant import ConstantAnimation
 from pysim.graphics.animations.float import LinearFloatAnimation
 from pysim.graphics.animations.function import FunctionAnimation
-from pysim.graphics.graphics_settings import GraphicsSettings
+from pysim.graphics.graphics_settings import GraphicsContext
 from pysim.graphics.layer import Layer
 from pysim.graphics.primitives.primitive import Primitive
 from pysim.graphics.primitives.shapes import Rectangle
@@ -21,7 +21,7 @@ from pysim.simulation.events.event import Event
 
 class BlockEvent(Event):
     @abstractmethod
-    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
+    def animate(self, context: GraphicsContext) -> Animation[Primitive]:
         ...
 
     def _render_block(self, layer: Layer, position: Vector2, size: float) -> Primitive:
@@ -38,10 +38,10 @@ class StayEvent(BlockEvent):
     def __init__(self, position: Vector):
         self.__position = position
 
-    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
-        position = Vector2(settings.tile_rectangle(self.__position).center)
-        size = settings.tile_size * 0.9
-        primitive = self._render_block(settings.entity_layer, position, size)
+    def animate(self, context: GraphicsContext) -> Animation[Primitive]:
+        position = Vector2(context.tile_rectangle(self.__position).center)
+        size = context.tile_size * 0.9
+        primitive = self._render_block(context.entity_layer, position, size)
         return ConstantAnimation[Primitive](primitive, 1)
 
 
@@ -53,18 +53,18 @@ class MoveEvent(BlockEvent):
         self.__start = start
         self.__displacement = displacement
 
-    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
+    def animate(self, context: GraphicsContext) -> Animation[Primitive]:
         def compute_position(time: float) -> Vector2:
             x = x_anim[time]
             y = y_anim[time]
             return Vector2(x, y)
 
         def compute_primitive(position: Vector2) -> Primitive:
-            return self._render_block(settings.entity_layer, position, size)
+            return self._render_block(context.entity_layer, position, size)
 
-        size = settings.tile_size * 0.9
-        sx, sy = settings.tile_rectangle(self.__start).center
-        ex, ey = settings.tile_rectangle(self.__start + self.__displacement).center
+        size = context.tile_size * 0.9
+        sx, sy = context.tile_rectangle(self.__start).center
+        ex, ey = context.tile_rectangle(self.__start + self.__displacement).center
         x_anim = LinearFloatAnimation(sx, ex, 1)
         y_anim = LinearFloatAnimation(sy, ey, 1)
         pos_anim = FunctionAnimation[Vector2](1, compute_position)

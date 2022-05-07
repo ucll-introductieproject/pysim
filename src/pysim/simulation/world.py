@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from pygame import Rect, Surface, draw
 
 from pysim.data import Grid, Vector
-from pysim.graphics.graphics_settings import GraphicsSettings
+from pysim.graphics.graphics_settings import GraphicsContext
 
 
 class Tile(ABC):
@@ -47,13 +47,13 @@ class World:
     def __getitem__(self, position: Vector) -> Tile:
         return self.__grid[position]
 
-    def render(self, surface: Surface, settings: GraphicsSettings) -> None:
+    def render(self, surface: Surface, context: GraphicsContext) -> None:
         for y in range(self.width):
             for x in range(self.height):
                 position = Vector(x, y)
-                self.__render_tile(surface, settings, position)
+                self.__render_tile(surface, context, position)
 
-    def __render_tile(self, surface: Surface, settings: GraphicsSettings, position: Vector) -> None:
-        rect = settings.tile_rectangle(position)
+    def __render_tile(self, surface: Surface, context: GraphicsContext, position: Vector) -> None:
+        rect = context.tile_rectangle(position)
         tile = self[position]
         tile.render(surface, rect)

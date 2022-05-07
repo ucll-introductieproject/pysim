@@ -11,7 +11,7 @@ from pysim.graphics.animations.animation import Animation
 from pysim.graphics.animations.constant import ConstantAnimation
 from pysim.graphics.animations.float import LinearFloatAnimation
 from pysim.graphics.animations.function import FunctionAnimation
-from pysim.graphics.graphics_settings import GraphicsSettings
+from pysim.graphics.graphics_settings import GraphicsContext
 from pysim.graphics.primitives.primitive import Primitive
 from pysim.simulation.entities.entity import Entity
 from pysim.simulation.events.event import Event
@@ -19,7 +19,7 @@ from pysim.simulation.events.event import Event
 
 class AgentEvent(Event):
     @abstractmethod
-    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
+    def animate(self, context: GraphicsContext) -> Animation[Primitive]:
         ...
 
 
@@ -31,10 +31,10 @@ class StayEvent(AgentEvent):
         self.__position = position
         self.__orientation = orientation
 
-    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
-        position = Vector2(settings.tile_rectangle(self.__position).center)
+    def animate(self, context: GraphicsContext) -> Animation[Primitive]:
+        position = Vector2(context.tile_rectangle(self.__position).center)
         angle = self.__orientation.angle
-        transformed_car = settings.agent.transform(position, angle)
+        transformed_car = context.agent.transform(position, angle)
         return ConstantAnimation[Primitive](transformed_car, 1)
 
 
@@ -48,18 +48,18 @@ class MoveEvent(AgentEvent):
         self.__displacement = displacement
         self.__orientation = orientation
 
-    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
+    def animate(self, context: GraphicsContext) -> Animation[Primitive]:
         def compute_position(time: float) -> Vector2:
             x = x_anim[time]
             y = y_anim[time]
             return Vector2(x, y)
 
-        sx, sy = settings.tile_rectangle(self.__start).center
-        ex, ey = settings.tile_rectangle(self.__start + self.__displacement).center
+        sx, sy = context.tile_rectangle(self.__start).center
+        ex, ey = context.tile_rectangle(self.__start + self.__displacement).center
         x_anim = LinearFloatAnimation(sx, ex, 1)
         y_anim = LinearFloatAnimation(sy, ey, 1)
         pos_anim = FunctionAnimation[Vector2](1, compute_position)
-        canonical_car = settings.agent
+        canonical_car = context.agent
         return pos_anim.map(lambda p: canonical_car.transform(p, self.__orientation.angle))
 
 
@@ -81,13 +81,13 @@ class TurnEvent(AgentEvent):
         self.__position = position
         self.__start_orientation = start_orientation
 
-    def animate(self, settings: GraphicsSettings) -> Animation[Primitive]:
-        tile_rect = settings.tile_rectangle(self.__position)
+    def animate(self, context: GraphicsContext) -> Animation[Primitive]:
+        tile_rect = context.tile_rectangle(self.__position)
         position = Vector2(tile_rect.center)
         start = self.__start_orientation.angle
         stop = self._make_turn(self.__start_orientation).angle
         angle_anim = LinearFloatAnimation(start, stop, 1)
-        return angle_anim.map(lambda angle: settings.agent.transform(position, angle))
+        return angle_anim.map(lambda angle: context.agent.transform(position, angle))
 
     @abstractmethod
     def _make_turn(self, orientation: Orientation) -> Orientation:

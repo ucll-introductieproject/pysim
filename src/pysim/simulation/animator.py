@@ -4,7 +4,7 @@ from typing import List
 
 from pysim.graphics.animations.animation import Animation
 from pysim.graphics.animations.stepwise import StepwiseAnimation
-from pysim.graphics.graphics_settings import GraphicsSettings
+from pysim.graphics.graphics_settings import GraphicsContext
 from pysim.graphics.primitives.primitive import Primitive
 from pysim.simulation.simulation import Simulation
 
@@ -12,9 +12,9 @@ from pysim.simulation.simulation import Simulation
 class Animator:
     __simulation: Simulation
     __animations: List[Animation[Primitive]]
-    __context: GraphicsSettings
+    __context: GraphicsContext
 
-    def __init__(self, simulation: Simulation, context: GraphicsSettings):
+    def __init__(self, simulation: Simulation, context: GraphicsContext):
         self.__simulation = simulation
         self.__animations = []
         self.__context = context
