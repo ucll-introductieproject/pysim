@@ -1,5 +1,5 @@
 from pysim.data import Grid, Vector
-from pysim.data.orientation import NORTH, EAST
+from pysim.data.orientation import NORTH, EAST, WEST, SOUTH
 from pysim.simulation.entities.agent import Agent
 from pysim.simulation.simulation import Simulation
 from pysim.simulation.tiles import Tile, Empty, Wall, Chasm
@@ -48,3 +48,28 @@ def test_forward_north():
     result, event = simulation.forward()
     assert result.agent.position == Vector(0, 0)
     assert result.agent.orientation is NORTH
+
+
+def test_forward_west():
+    world = parse_world('''
+        ..
+        ''')
+    agent = Agent(Vector(1, 0), WEST)
+    entities = []
+    simulation = Simulation(world, agent, entities)
+    result, event = simulation.forward()
+    assert result.agent.position == Vector(0, 0)
+    assert result.agent.orientation is WEST
+
+
+def test_forward_south():
+    world = parse_world('''
+        .
+        .
+        ''')
+    agent = Agent(Vector(0, 0), SOUTH)
+    entities = []
+    simulation = Simulation(world, agent, entities)
+    result, event = simulation.forward()
+    assert result.agent.position == Vector(0, 1)
+    assert result.agent.orientation is SOUTH
