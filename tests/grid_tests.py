@@ -3,14 +3,14 @@ import pytest
 from pysim.data import Grid, Vector
 
 
-@pytest.mark.parametrize("width, height", [(w, h) for w in range(1, 10) for h in range(1, 10)])
+@pytest.mark.parametrize("width, height", [(w, h) for w in [1, 2, 3, 7, 10] for h in [1, 2, 3, 7, 10]])
 def test_size(width, height):
     grid = Grid(width, height, lambda p: None)
     assert grid.width == width
     assert grid.height == height
 
 
-@pytest.mark.parametrize("width, height", [(w, h) for w in range(1, 10) for h in range(1, 10)])
+@pytest.mark.parametrize("width, height", [(w, h) for w in [1, 2, 3, 7, 10] for h in [1, 2, 3, 7, 10]])
 def test_initialization(width, height):
     def initialize(position: Vector):
         return position.x + position.y * width
