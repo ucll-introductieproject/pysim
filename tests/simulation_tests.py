@@ -72,3 +72,45 @@ def test_forward(world, start_position, start_orientation, end_position):
     result, event = simulation.forward()
     assert result.agent.position == Vector(*end_position)
     assert result.agent.orientation is start_orientation
+
+
+@mark.parametrize("world, start_position, start_orientation", [
+    (
+            [
+                '.W',
+            ],
+            (0, 0),
+            EAST,
+    ),
+    (
+            [
+                'W.',
+            ],
+            (1, 0),
+            WEST,
+    ),
+    (
+            [
+                '.',
+                'W',
+            ],
+            (0, 0),
+            SOUTH,
+    ),
+    (
+            [
+                'W',
+                '.',
+            ],
+            (0, 1),
+            NORTH,
+    ),
+])
+def test_bump_into_wall(world, start_position, start_orientation):
+    world = parse_world(world)
+    agent = Agent(Vector(*start_position), start_orientation)
+    entities = []
+    simulation = Simulation(world, agent, entities)
+    result, event = simulation.forward()
+    assert result.agent.position == Vector(*start_position)
+    assert result.agent.orientation is start_orientation
