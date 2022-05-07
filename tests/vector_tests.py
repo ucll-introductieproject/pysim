@@ -29,9 +29,9 @@ def test_4cw_eq_id(x, y):
 
 @mark.parametrize('x, y', [(x, y) for x in range(-5, 5) for y in range(-5, 5)])
 def test_4ccw_eq_id(x, y):
-    vector = Vector(x, y)
-    ccw4 = vector.rotate_counterclockwise().rotate_counterclockwise().rotate_counterclockwise().rotate_counterclockwise()
-    assert ccw4 == vector
+    v = Vector(x, y)
+    ccw4 = v.rotate_counterclockwise().rotate_counterclockwise().rotate_counterclockwise().rotate_counterclockwise()
+    assert ccw4 == v
 
 
 @mark.parametrize('vector, expected', [
