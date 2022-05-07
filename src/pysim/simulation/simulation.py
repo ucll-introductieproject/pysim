@@ -60,7 +60,7 @@ class Simulation:
             if self.__contains_block(destination):
                 return self.___move_forward_unhindered()
             else:
-                return to_wall()
+                return self.__bump()
 
         agent = self.agent
         new_agent, agent_event = agent.forward()
