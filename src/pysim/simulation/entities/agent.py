@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Tuple
+from typing import Tuple, Any
 
 from pygame import Vector2
 
@@ -152,3 +152,6 @@ class Agent(Entity):
     def stay(self) -> Event:
         event = StayEvent(self.__position, self.__orientation)
         return event
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, Agent) and self.position == other.position and self.orientation is other.orientation
