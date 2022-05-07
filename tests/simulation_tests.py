@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Optional
 
 from pytest import mark
 
@@ -6,14 +6,14 @@ from pysim.data import Grid, Vector
 from pysim.data.orientation import NORTH, EAST, WEST, SOUTH
 from pysim.simulation.entities.agent import Agent
 from pysim.simulation.entities.block import Block
-from pysim.simulation.entities.entity import Entity
 from pysim.simulation.simulation import Simulation
 from pysim.simulation.tiles import Tile, Empty, Wall, Chasm
 from pysim.simulation.world import World
 
 
-def parse_world(rows: List[str]) -> Tuple[World, List[Entity]]:
+def parse_world(rows: List[str]) -> Simulation:
     def initialize(position: Vector) -> Tile:
+        nonlocal agent
         x, y = position
         match tile := rows[y][x]:
             case '.':
@@ -25,242 +25,225 @@ def parse_world(rows: List[str]) -> Tuple[World, List[Entity]]:
             case 'B':
                 entities.append(Block(position))
                 return Empty()
+            case '^':
+                agent = Agent(position, NORTH)
+                return Empty()
+            case 'v':
+                agent = Agent(position, SOUTH)
+                return Empty()
+            case '<':
+                agent = Agent(position, WEST)
+                return Empty()
+            case '>':
+                agent = Agent(position, EAST)
+                return Empty()
             case _:
                 assert False, f'unparseable {tile}'
 
     width = len(rows[0])
     height = len(rows)
+    agent: Optional[Agent] = None
     entities = []
     world = World(Grid(width, height, initialize))
-    return (world, entities)
+    assert agent is not None
+    return Simulation(world, agent, entities)
 
 
-@mark.parametrize("world, start_position, start_orientation, end_position", [
+@mark.parametrize("str_start, str_end", [
     (
             [
-                '..',
+                '>.',
             ],
-            (0, 0),
-            EAST,
-            (1, 0)
+            [
+                '.>',
+            ],
     ),
     (
             [
-                '..',
+                '.<',
             ],
-            (1, 0),
-            WEST,
-            (0, 0)
-    ),
-    (
             [
-                '.',
-                '.',
+                '<.',
             ],
-            (0, 0),
-            SOUTH,
-            (0, 1)
     ),
     (
             [
                 '.',
+                '^',
+            ],
+            [
+                '^',
                 '.',
             ],
-            (0, 1),
-            NORTH,
-            (0, 0)
+    ),
+    (
+            [
+                'v',
+                '.',
+            ],
+            [
+                '.',
+                'v',
+            ],
     ),
 ])
-def test_forward(world, start_position, start_orientation, end_position):
-    world, entities = parse_world(world)
-    agent = Agent(Vector(*start_position), start_orientation)
-    simulation = Simulation(world, agent, entities)
-    result, event = simulation.forward()
-    assert result.agent.position == Vector(*end_position)
-    assert result.agent.orientation is start_orientation
+def test_forward(str_start, str_end):
+    start = parse_world(str_start)
+    expected = parse_world(str_end)
+    actual, events = start.forward()
+    assert actual.agent == expected.agent
 
 
-@mark.parametrize("world, start_position, start_orientation", [
+@mark.parametrize("str_state", [
     (
             [
-                '.W',
-            ],
-            (0, 0),
-            EAST,
+                '>W',
+            ]
     ),
     (
             [
-                'W.',
-            ],
-            (1, 0),
-            WEST,
+                'W<',
+            ]
     ),
     (
             [
-                '.',
+                'v',
                 'W',
-            ],
-            (0, 0),
-            SOUTH,
+            ]
     ),
     (
             [
                 'W',
-                '.',
-            ],
-            (0, 1),
-            NORTH,
+                '^',
+            ]
     ),
 ])
-def test_forward_bump_into_wall(world, start_position, start_orientation):
-    world, entities = parse_world(world)
-    agent = Agent(Vector(*start_position), start_orientation)
-    simulation = Simulation(world, agent, entities)
-    result, event = simulation.forward()
-    assert result.agent.position == Vector(*start_position)
-    assert result.agent.orientation is start_orientation
+def test_forward_bump_into_wall(str_state):
+    start = parse_world(str_state)
+    actual, events = start.forward()
+    assert actual.agent == start.agent
 
 
-@mark.parametrize("world, start_position, start_orientation, end_position", [
+@mark.parametrize("str_start, str_end", [
     (
             [
-                '..',
+                '<.',
             ],
-            (1, 0),
-            EAST,
-            (0, 0)
+            [
+                '.<',
+            ],
     ),
     (
             [
-                '..',
+                '.>',
             ],
-            (0, 0),
-            WEST,
-            (1, 0)
-    ),
-    (
             [
-                '.',
-                '.',
+                '>.',
             ],
-            (0, 1),
-            SOUTH,
-            (0, 0)
     ),
     (
             [
                 '.',
+                'v',
+            ],
+            [
+                'v',
                 '.',
             ],
-            (0, 0),
-            NORTH,
-            (0, 1)
+    ),
+    (
+            [
+                '^',
+                '.',
+            ],
+            [
+                '.',
+                '^',
+            ],
     ),
 ])
-def test_backward(world, start_position, start_orientation, end_position):
-    world, entities = parse_world(world)
-    agent = Agent(Vector(*start_position), start_orientation)
-    simulation = Simulation(world, agent, entities)
-    result, event = simulation.backward()
-    assert result.agent.position == Vector(*end_position)
-    assert result.agent.orientation is start_orientation
+def test_forward(str_start, str_end):
+    start = parse_world(str_start)
+    expected = parse_world(str_end)
+    actual, events = start.backward()
+    assert actual.agent == expected.agent
 
 
-@mark.parametrize("world, start_position, start_orientation", [
+@mark.parametrize("str_state", [
     (
             [
-                '.W',
-            ],
-            (0, 0),
-            WEST,
+                '<W',
+            ]
     ),
     (
             [
-                'W.',
-            ],
-            (1, 0),
-            EAST,
+                'W>',
+            ]
     ),
     (
             [
-                '.',
+                '^',
                 'W',
-            ],
-            (0, 0),
-            NORTH,
+            ]
     ),
     (
             [
                 'W',
-                '.',
-            ],
-            (0, 1),
-            SOUTH,
+                'v',
+            ]
     ),
 ])
-def test_backward_bump_into_wall(world, start_position, start_orientation):
-    world, entities = parse_world(world)
-    agent = Agent(Vector(*start_position), start_orientation)
-    simulation = Simulation(world, agent, entities)
-    result, event = simulation.backward()
-    assert result.agent.position == Vector(*start_position)
-    assert result.agent.orientation is start_orientation
+def test_forward_bump_into_wall(str_state):
+    start = parse_world(str_state)
+    actual, events = start.backward()
+    assert actual.agent == start.agent
 
 
-@mark.parametrize("world, start_position, start_orientation, new_world", [
+@mark.parametrize("str_start, str_end", [
     (
             [
-                '.B.',
+                '>B.',
             ],
-            (0, 0),
-            EAST,
             [
-                '..B',
+                '.>B',
             ],
     ),
     (
             [
-                '.B.',
+                '.B<',
             ],
-            (2, 0),
-            WEST,
             [
-                'B..',
+                'B<.',
             ],
     ),
     (
             [
                 '.',
                 'B',
-                '.',
+                '^',
             ],
-            (0, 0),
-            SOUTH,
             [
-                '.',
-                '.',
                 'B',
+                '^',
+                '.',
             ],
     ),
     (
             [
-                '.',
+                'v',
                 'B',
                 '.',
             ],
-            (0, 2),
-            NORTH,
             [
+                '.',
+                'v',
                 'B',
-                '.',
-                '.',
             ],
     ),
 ])
-def test_push_block(world, start_position, start_orientation, new_world):
-    world, entities = parse_world(world)
-    new_world, new_entities = parse_world(new_world)
-    agent = Agent(Vector(*start_position), start_orientation)
-    simulation = Simulation(world, agent, entities)
-    result, event = simulation.forward()
-    assert result.entities == new_entities
+def test_push_block(str_start, str_end):
+    start = parse_world(str_start)
+    expected = parse_world(str_end)
+    actual, event = start.forward()
+    assert actual.agent == expected.agent
+    assert actual.entities == expected.entities
