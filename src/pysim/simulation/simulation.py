@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Tuple, cast, Type
+from typing import List, Tuple, cast, Type, Iterable
 
 from pysim.data import Vector
 from pysim.data.orientation import Orientation
@@ -177,8 +177,11 @@ class Simulation:
     def __contains_chasm(self, position: Vector) -> bool:
         return self.__contains_tile_of_type(position, Chasm)
 
+    def __contains_entity(self, position: Vector, entity_type: Type) -> bool:
+        return any(isinstance(e, entity_type) for e in self.__entities_at(position))
+
     def __contains_block(self, position: Vector) -> bool:
-        return any(e.position == position and isinstance(e, Block) for e in self.__entities)
+        return self.__contains_entity(position, Block)
 
     def __is_free(self, position: Vector) -> bool:
         """
@@ -188,8 +191,8 @@ class Simulation:
         """
         return not any(e.position == position for e in self.__entities)
 
-    def __get_entities_at(self, position: Vector) -> List[Entity]:
-        return [e for e in self.__entities if e.position == position]
+    def __entities_at(self, position: Vector) -> Iterable[Entity]:
+        return (e for e in self.__entities if e.position == position)
 
     def __extract_entity_at(self, position: Vector) -> Tuple[Entity, List[Entity]]:
         at_position: List[Entity] = []
