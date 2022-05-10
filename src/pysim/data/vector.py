@@ -73,3 +73,6 @@ class Vector:
 
     def move(self, orientation: Orientation, distance: int = 1) -> Vector:
         return self + Vector.from_orientation(orientation) * distance
+
+    def __hash__(self) -> int:
+        return self.x ^ self.y
