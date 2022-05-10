@@ -93,3 +93,6 @@ class Block(Entity):
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Block) and self.position == other.position
+
+    def __hash__(self) -> int:
+        return hash(self.__position)
