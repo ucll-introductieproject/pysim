@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Tuple, cast, Type, Iterable
+from typing import List, Tuple, cast, Type, Iterable, Dict
 
 from pysim.data import Vector
 from pysim.data.orientation import Orientation
@@ -45,8 +45,9 @@ class Simulation:
                     new_block, block_event = block.move(agent.orientation)
                     new_entities = [new_block, *other_entities]
                     new_state = Simulation(world, new_agent, new_entities)
-                    other_entity_events = [e.stay() for e in other_entities]
-                    combined_event = ParallelEvents([agent_event, block_event, *other_entity_events])
+                    entity_events = self.__default_events()
+                    del entity_events[block]
+                    combined_event = ParallelEvents([agent_event, block_event, *entity_events.values()])
                     return (new_state, combined_event)
                 else:
                     return self.__bump()
@@ -83,8 +84,9 @@ class Simulation:
                     new_block, block_event = block.move(push_direction)
                     new_entities = [new_block, *other_entities]
                     new_state = Simulation(world, new_agent, new_entities)
-                    other_entity_events = [e.stay() for e in other_entities]
-                    combined_event = ParallelEvents([agent_event, block_event, *other_entity_events])
+                    entity_events = self.__default_events()
+                    del entity_events[block]
+                    combined_event = ParallelEvents([agent_event, block_event, *entity_events.values()])
                     return (new_state, combined_event)
                 else:
                     return self.__bump()
@@ -96,7 +98,7 @@ class Simulation:
 
         def to_chasm():
             if self.__contains_block(destination):
-                return self.___move_back_unhindered()
+                return self.___move_backward_unhindered()
             else:
                 return self.__bump()
 
@@ -111,11 +113,9 @@ class Simulation:
             if_chasm=to_chasm)
 
     def ___move_forward_unhindered(self) -> Tuple[Simulation, Event]:
-        agent = self.agent
-        new_agent, agent_event = agent.forward()
-        world = self.__world
-        new_state = Simulation(world, new_agent, self.__entities)
-        entity_events = [e.stay() for e in self.__entities]
+        new_agent, agent_event = self.agent.forward()
+        new_state = Simulation(self.__world, new_agent, self.__entities)
+        entity_events = self.__default_events().values()
         packed = self.__pack_events([agent_event, *entity_events])
         return (new_state, packed)
 
@@ -124,7 +124,7 @@ class Simulation:
         new_agent, agent_event = agent.backward()
         world = self.__world
         new_state = Simulation(world, new_agent, self.__entities)
-        entity_events = [e.stay() for e in self.__entities]
+        entity_events = self.__default_events().values()
         packed = self.__pack_events([agent_event, *entity_events])
         return (new_state, packed)
 
@@ -210,6 +210,9 @@ class Simulation:
             new_entity,
             *(e for e in entities if e is not entity)
         ]
+
+    def __default_events(self) -> Dict[Entity, Event]:
+        return {entity: entity.stay() for entity in self.__entities}
 
 
 class Simulator:
