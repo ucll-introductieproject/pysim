@@ -142,19 +142,15 @@ class Simulation:
         return (self, packed)
 
     def turn_left(self) -> Tuple[Simulation, Event]:
-        world = self.world
-        agent = self.agent
-        new_agent, event = agent.turn_left()
-        new_state = Simulation(world, new_agent, self.__entities)
+        new_agent, event = self.agent.turn_left()
+        new_state = Simulation(self.world, new_agent, self.__entities)
         entity_events = [e.stay() for e in self.__entities]
         packed = self.__pack_events([event, *entity_events])
         return (new_state, packed)
 
     def turn_right(self) -> Tuple[Simulation, Event]:
-        world = self.world
-        agent = self.agent
-        new_agent, event = agent.turn_right()
-        new_state = Simulation(world, new_agent, self.__entities)
+        new_agent, event = self.agent.turn_right()
+        new_state = Simulation(self.world, new_agent, self.__entities)
         entity_events = [e.stay() for e in self.__entities]
         packed = self.__pack_events([event, *entity_events])
         return (new_state, packed)
