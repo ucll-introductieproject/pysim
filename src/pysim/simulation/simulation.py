@@ -52,14 +52,14 @@ class Simulation:
                 else:
                     return self.__bump()
             else:
-                return self.___move_forward_unhindered()
+                return self.__move_forward_unhindered()
 
         def to_wall():
             return self.__bump()
 
         def to_chasm():
             if self.__contains_block(destination):
-                return self.___move_forward_unhindered()
+                return self.__move_forward_unhindered()
             else:
                 return self.__bump()
 
@@ -112,7 +112,7 @@ class Simulation:
             if_wall=to_wall,
             if_chasm=to_chasm)
 
-    def ___move_forward_unhindered(self) -> Tuple[Simulation, Event]:
+    def __move_forward_unhindered(self) -> Tuple[Simulation, Event]:
         new_agent, agent_event = self.agent.forward()
         new_state = Simulation(self.__world, new_agent, self.__entities)
         entity_events = self.__default_events().values()
