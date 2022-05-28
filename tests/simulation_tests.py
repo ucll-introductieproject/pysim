@@ -87,7 +87,7 @@ def parse_simulation(rows: List[str]) -> Simulation:
             ],
     ),
 ])
-def test_forward(str_start, str_end):
+def test_forward_into_empty_space(str_start, str_end):
     start = parse_simulation(str_start)
     expected = parse_simulation(str_end)
     actual, events = start.forward()
@@ -162,7 +162,7 @@ def test_forward_bump_into_wall(str_state):
             ],
     ),
 ])
-def test_forward(str_start, str_end):
+def test_backward(str_start, str_end):
     start = parse_simulation(str_start)
     expected = parse_simulation(str_end)
     actual, events = start.backward()
@@ -193,7 +193,7 @@ def test_forward(str_start, str_end):
             ]
     ),
 ])
-def test_forward_bump_into_wall(str_state):
+def test_backward_bump_into_wall(str_state):
     start = parse_simulation(str_state)
     actual, events = start.backward()
     assert actual.agent == start.agent
@@ -241,7 +241,7 @@ def test_forward_bump_into_wall(str_state):
             ],
     ),
 ])
-def test_push_block(str_start, str_end):
+def test_forward_push_block(str_start, str_end):
     start = parse_simulation(str_start)
     expected = parse_simulation(str_end)
     actual, event = start.forward()
@@ -291,7 +291,7 @@ def test_push_block(str_start, str_end):
             ],
     ),
 ])
-def test_push_block_backward(str_start, str_end):
+def test_backward_push_block(str_start, str_end):
     start = parse_simulation(str_start)
     expected = parse_simulation(str_end)
     actual, event = start.backward()
