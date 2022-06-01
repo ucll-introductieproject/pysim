@@ -49,7 +49,15 @@ def parse_simulation(rows: List[str]) -> Simulation:
     return Simulation(world, agent, entities)
 
 
-@mark.parametrize("str_start, str_end", [
+def with_before_after(pairs):
+    def wrapper(function):
+        return mark.parametrize('start, expected', parsed_pairs)(function)
+
+    parsed_pairs = [(parse_simulation(before), parse_simulation(after)) for before, after in pairs]
+    return wrapper
+
+
+@with_before_after([
     (
             [
                 '>.',
@@ -87,9 +95,7 @@ def parse_simulation(rows: List[str]) -> Simulation:
             ],
     ),
 ])
-def test_forward_into_empty_space(str_start, str_end):
-    start = parse_simulation(str_start)
-    expected = parse_simulation(str_end)
+def test_forward_into_empty_space(start, expected):
     actual, events = start.forward()
     assert actual.agent == expected.agent
 
@@ -124,7 +130,7 @@ def test_forward_bump_into_wall(str_state):
     assert actual.agent == start.agent
 
 
-@mark.parametrize("str_start, str_end", [
+@with_before_after([
     (
             [
                 '<.',
@@ -162,9 +168,7 @@ def test_forward_bump_into_wall(str_state):
             ],
     ),
 ])
-def test_backward(str_start, str_end):
-    start = parse_simulation(str_start)
-    expected = parse_simulation(str_end)
+def test_backward(start, expected):
     actual, events = start.backward()
     assert actual.agent == expected.agent
 
@@ -199,7 +203,7 @@ def test_backward_bump_into_wall(str_state):
     assert actual.agent == start.agent
 
 
-@mark.parametrize("str_start, str_end", [
+@with_before_after([
     (
             [
                 '>B.',
@@ -241,15 +245,13 @@ def test_backward_bump_into_wall(str_state):
             ],
     ),
 ])
-def test_forward_push_block(str_start, str_end):
-    start = parse_simulation(str_start)
-    expected = parse_simulation(str_end)
+def test_forward_push_block(start, expected):
     actual, event = start.forward()
     assert actual.agent == expected.agent
     assert actual.entities == expected.entities
 
 
-@mark.parametrize("str_start, str_end", [
+@with_before_after([
     (
             [
                 '<B.',
@@ -291,9 +293,7 @@ def test_forward_push_block(str_start, str_end):
             ],
     ),
 ])
-def test_backward_push_block(str_start, str_end):
-    start = parse_simulation(str_start)
-    expected = parse_simulation(str_end)
+def test_backward_push_block(start, expected):
     actual, event = start.backward()
     assert actual.agent == expected.agent
     assert actual.entities == expected.entities
