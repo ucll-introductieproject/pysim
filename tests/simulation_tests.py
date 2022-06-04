@@ -30,7 +30,7 @@ class Initializer(ABC):
         pass
 
 
-def grid_initializer_factory(tile_factory: Callable[[], tiles.Tile]) -> InitializerFactory:
+def tile_initializer_factory(tile_factory: Callable[[], tiles.Tile]) -> InitializerFactory:
     class TileInitializer(Initializer):
         def initialize(self, position: Vector) -> None:
             self.grid[position] = tile_factory()
@@ -74,14 +74,14 @@ def combine(*factories: InitializerFactory) -> InitializerFactory:
 InitializerFactory = Callable[[Grid[tiles.Tile], List[Agent], List[Entity]], Initializer]
 
 Default: Dict[str, InitializerFactory] = {
-    '.': grid_initializer_factory(tiles.Empty),
-    'W': grid_initializer_factory(tiles.Wall),
-    'C': grid_initializer_factory(tiles.Chasm),
+    '.': tile_initializer_factory(tiles.Empty),
+    'W': tile_initializer_factory(tiles.Wall),
+    'C': tile_initializer_factory(tiles.Chasm),
     '^': agent_initializer_factory(NORTH),
     'v': agent_initializer_factory(SOUTH),
     '<': agent_initializer_factory(WEST),
     '>': agent_initializer_factory(EAST),
-    'B': combine(grid_initializer_factory(tiles.Empty), entity_initializer_factory(Block)),
+    'B': combine(tile_initializer_factory(tiles.Empty), entity_initializer_factory(Block)),
 }
 
 
@@ -378,7 +378,7 @@ def test_backward_push_block(start, expected):
 @changes_state(
     {
         **Default,
-        'F': combine(grid_initializer_factory(tiles.Chasm), entity_initializer_factory(Block)),
+        'F': combine(tile_initializer_factory(tiles.Chasm), entity_initializer_factory(Block)),
     },
     [
         (
