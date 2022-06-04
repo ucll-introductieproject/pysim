@@ -373,3 +373,58 @@ def test_backward_push_block(start, expected):
     actual, event = start.backward()
     assert actual.agent == expected.agent
     assert actual.entities == expected.entities
+
+
+@changes_state(
+    {
+        **Default,
+        'F': combine(grid_initializer_factory(tiles.Chasm), entity_initializer_factory(Block)),
+    },
+    [
+        (
+                [
+                    '>F.',
+                ],
+                [
+                    '.F>',
+                ],
+        ),
+        (
+                [
+                    '.F<',
+                ],
+                [
+                    '<F.',
+                ],
+        ),
+        (
+                [
+                    'v',
+                    'F',
+                    '.',
+                ],
+                [
+                    '.',
+                    'F',
+                    'v',
+                ],
+        ),
+        (
+                [
+                    '.',
+                    'F',
+                    '^',
+                ],
+                [
+                    '^',
+                    'F',
+                    '.',
+                ],
+        ),
+    ]
+)
+def test_cross_chasm_forward(start, expected):
+    state, _ = start.forward()
+    actual, _ = state.forward()
+    assert actual.agent == expected.agent
+    assert actual.entities == expected.entities
