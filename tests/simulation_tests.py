@@ -49,7 +49,7 @@ def parse_simulation(rows: List[str]) -> Simulation:
     return Simulation(world, agent, entities)
 
 
-def with_before_after(pairs):
+def changes_state(pairs):
     def wrapper(function):
         return mark.parametrize('start, expected', parsed_pairs)(function)
 
@@ -57,7 +57,15 @@ def with_before_after(pairs):
     return wrapper
 
 
-@with_before_after([
+def preserves_state(state_strings):
+    def wrapper(function):
+        return mark.parametrize('state', parsed)(function)
+
+    parsed = [parse_simulation(s) for s in state_strings]
+    return wrapper
+
+
+@changes_state([
     (
             [
                 '>.',
@@ -100,37 +108,28 @@ def test_forward_into_empty_space(start, expected):
     assert actual.agent == expected.agent
 
 
-@mark.parametrize("str_state", [
-    (
-            [
-                '>W',
-            ]
-    ),
-    (
-            [
-                'W<',
-            ]
-    ),
-    (
-            [
-                'v',
-                'W',
-            ]
-    ),
-    (
-            [
-                'W',
-                '^',
-            ]
-    ),
+@preserves_state([
+    [
+        '>W',
+    ],
+    [
+        'W<',
+    ],
+    [
+        'v',
+        'W',
+    ],
+    [
+        'W',
+        '^',
+    ],
 ])
-def test_forward_bump_into_wall(str_state):
-    start = parse_simulation(str_state)
-    actual, events = start.forward()
-    assert actual.agent == start.agent
+def test_forward_bump_into_wall(state):
+    actual, events = state.forward()
+    assert actual.agent == state.agent
 
 
-@with_before_after([
+@changes_state([
     (
             [
                 '<.',
@@ -173,7 +172,7 @@ def test_backward(start, expected):
     assert actual.agent == expected.agent
 
 
-@mark.parametrize("str_state", [
+@preserves_state([
     (
             [
                 '<W',
@@ -197,13 +196,12 @@ def test_backward(start, expected):
             ]
     ),
 ])
-def test_backward_bump_into_wall(str_state):
-    start = parse_simulation(str_state)
-    actual, events = start.backward()
-    assert actual.agent == start.agent
+def test_backward_bump_into_wall(state):
+    actual, events = state.backward()
+    assert actual.agent == state.agent
 
 
-@with_before_after([
+@changes_state([
     (
             [
                 '>B.',
@@ -251,7 +249,7 @@ def test_forward_push_block(start, expected):
     assert actual.entities == expected.entities
 
 
-@with_before_after([
+@changes_state([
     (
             [
                 '<B.',
