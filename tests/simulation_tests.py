@@ -169,10 +169,18 @@ def changes_state2(factory_map: Dict[str, InitializerFactory], before_after_pair
     return wrapper
 
 
+def preserves_state2(factory_map: Dict[str, InitializerFactory], state_strings):
+    parse = create_parser(factory_map)
+
+    def wrapper(function):
+        return mark.parametrize('state', parsed)(function)
+
+    parsed = [parse(s) for s in state_strings]
+    return wrapper
+
+
 @changes_state2(
-    {
-        **Default
-    },
+    Default,
     [
         (
                 [
@@ -217,189 +225,204 @@ def test_forward_into_empty_space(start, expected):
     assert actual.agent == expected.agent
 
 
-@preserves_state([
+@preserves_state2(
+    Default,
     [
-        '>W',
-    ],
-    [
-        'W<',
-    ],
-    [
-        'v',
-        'W',
-    ],
-    [
-        'W',
-        '^',
-    ],
-])
+        [
+            '>W',
+        ],
+        [
+            'W<',
+        ],
+        [
+            'v',
+            'W',
+        ],
+        [
+            'W',
+            '^',
+        ],
+    ]
+)
 def test_forward_bump_into_wall(state):
     actual, events = state.forward()
     assert actual.agent == state.agent
 
 
-@changes_state([
-    (
-            [
-                '<.',
-            ],
-            [
-                '.<',
-            ],
-    ),
-    (
-            [
-                '.>',
-            ],
-            [
-                '>.',
-            ],
-    ),
-    (
-            [
-                '.',
-                'v',
-            ],
-            [
-                'v',
-                '.',
-            ],
-    ),
-    (
-            [
-                '^',
-                '.',
-            ],
-            [
-                '.',
-                '^',
-            ],
-    ),
-])
+@changes_state2(
+    Default,
+    [
+        (
+                [
+                    '<.',
+                ],
+                [
+                    '.<',
+                ],
+        ),
+        (
+                [
+                    '.>',
+                ],
+                [
+                    '>.',
+                ],
+        ),
+        (
+                [
+                    '.',
+                    'v',
+                ],
+                [
+                    'v',
+                    '.',
+                ],
+        ),
+        (
+                [
+                    '^',
+                    '.',
+                ],
+                [
+                    '.',
+                    '^',
+                ],
+        ),
+    ]
+)
 def test_backward(start, expected):
     actual, events = start.backward()
     assert actual.agent == expected.agent
 
 
-@preserves_state([
-    (
-            [
-                '<W',
-            ]
-    ),
-    (
-            [
-                'W>',
-            ]
-    ),
-    (
-            [
-                '^',
-                'W',
-            ]
-    ),
-    (
-            [
-                'W',
-                'v',
-            ]
-    ),
-])
+@preserves_state2(
+    Default,
+    [
+        (
+                [
+                    '<W',
+                ]
+        ),
+        (
+                [
+                    'W>',
+                ]
+        ),
+        (
+                [
+                    '^',
+                    'W',
+                ]
+        ),
+        (
+                [
+                    'W',
+                    'v',
+                ]
+        ),
+    ]
+)
 def test_backward_bump_into_wall(state):
     actual, events = state.backward()
     assert actual.agent == state.agent
 
 
-@changes_state([
-    (
-            [
-                '>B.',
-            ],
-            [
-                '.>B',
-            ],
-    ),
-    (
-            [
-                '.B<',
-            ],
-            [
-                'B<.',
-            ],
-    ),
-    (
-            [
-                '.',
-                'B',
-                '^',
-            ],
-            [
-                'B',
-                '^',
-                '.',
-            ],
-    ),
-    (
-            [
-                'v',
-                'B',
-                '.',
-            ],
-            [
-                '.',
-                'v',
-                'B',
-            ],
-    ),
-])
+@changes_state2(
+    Default,
+    [
+        (
+                [
+                    '>B.',
+                ],
+                [
+                    '.>B',
+                ],
+        ),
+        (
+                [
+                    '.B<',
+                ],
+                [
+                    'B<.',
+                ],
+        ),
+        (
+                [
+                    '.',
+                    'B',
+                    '^',
+                ],
+                [
+                    'B',
+                    '^',
+                    '.',
+                ],
+        ),
+        (
+                [
+                    'v',
+                    'B',
+                    '.',
+                ],
+                [
+                    '.',
+                    'v',
+                    'B',
+                ],
+        ),
+    ]
+)
 def test_forward_push_block(start, expected):
     actual, event = start.forward()
     assert actual.agent == expected.agent
     assert actual.entities == expected.entities
 
 
-@changes_state([
-    (
-            [
-                '<B.',
-            ],
-            [
-                '.<B',
-            ],
-    ),
-    (
-            [
-                '.B>',
-            ],
-            [
-                'B>.',
-            ],
-    ),
-    (
-            [
-                '.',
-                'B',
-                'v',
-            ],
-            [
-                'B',
-                'v',
-                '.',
-            ],
-    ),
-    (
-            [
-                '^',
-                'B',
-                '.',
-            ],
-            [
-                '.',
-                '^',
-                'B',
-            ],
-    ),
-])
+@changes_state2(
+    Default,
+    [
+        (
+                [
+                    '<B.',
+                ],
+                [
+                    '.<B',
+                ],
+        ),
+        (
+                [
+                    '.B>',
+                ],
+                [
+                    'B>.',
+                ],
+        ),
+        (
+                [
+                    '.',
+                    'B',
+                    'v',
+                ],
+                [
+                    'B',
+                    'v',
+                    '.',
+                ],
+        ),
+        (
+                [
+                    '^',
+                    'B',
+                    '.',
+                ],
+                [
+                    '.',
+                    '^',
+                    'B',
+                ],
+        ),
+    ]
+)
 def test_backward_push_block(start, expected):
     actual, event = start.backward()
     assert actual.agent == expected.agent
