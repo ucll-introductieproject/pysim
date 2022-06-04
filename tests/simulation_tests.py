@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict, Callable
+from typing import List, Dict, Callable
 
 from pytest import mark
 
@@ -13,60 +13,6 @@ from pysim.simulation.entities.block import Block
 from pysim.simulation.entities.entity import Entity
 from pysim.simulation.simulation import Simulation
 from pysim.simulation.world import World
-
-
-def parse_simulation(rows: List[str]) -> Simulation:
-    def initialize(position: Vector) -> tiles.Tile:
-        nonlocal agent
-        x, y = position
-        match tile := rows[y][x]:
-            case '.':
-                return tiles.Empty()
-            case 'W':
-                return tiles.Wall()
-            case 'C':
-                return tiles.Chasm()
-            case 'B':
-                entities.append(Block(position))
-                return tiles.Empty()
-            case '^':
-                agent = Agent(position, NORTH)
-                return tiles.Empty()
-            case 'v':
-                agent = Agent(position, SOUTH)
-                return tiles.Empty()
-            case '<':
-                agent = Agent(position, WEST)
-                return tiles.Empty()
-            case '>':
-                agent = Agent(position, EAST)
-                return tiles.Empty()
-            case _:
-                assert False, f'unparseable {tile}'
-
-    width = len(rows[0])
-    height = len(rows)
-    agent: Optional[Agent] = None
-    entities = []
-    world = World(Grid(width, height, initialize))
-    assert agent is not None
-    return Simulation(world, agent, entities)
-
-
-def changes_state(pairs):
-    def wrapper(function):
-        return mark.parametrize('start, expected', parsed_pairs)(function)
-
-    parsed_pairs = [(parse_simulation(before), parse_simulation(after)) for before, after in pairs]
-    return wrapper
-
-
-def preserves_state(state_strings):
-    def wrapper(function):
-        return mark.parametrize('state', parsed)(function)
-
-    parsed = [parse_simulation(s) for s in state_strings]
-    return wrapper
 
 
 class Initializer(ABC):
@@ -159,7 +105,7 @@ def create_parser(factory_map: Dict[str, InitializerFactory]) -> Callable[[List[
     return parse
 
 
-def changes_state2(factory_map: Dict[str, InitializerFactory], before_after_pairs):
+def changes_state(factory_map: Dict[str, InitializerFactory], before_after_pairs):
     parse = create_parser(factory_map)
 
     def wrapper(function):
@@ -169,7 +115,7 @@ def changes_state2(factory_map: Dict[str, InitializerFactory], before_after_pair
     return wrapper
 
 
-def preserves_state2(factory_map: Dict[str, InitializerFactory], state_strings):
+def preserves_state(factory_map: Dict[str, InitializerFactory], state_strings):
     parse = create_parser(factory_map)
 
     def wrapper(function):
@@ -179,7 +125,7 @@ def preserves_state2(factory_map: Dict[str, InitializerFactory], state_strings):
     return wrapper
 
 
-@changes_state2(
+@changes_state(
     Default,
     [
         (
@@ -225,7 +171,7 @@ def test_forward_into_empty_space(start, expected):
     assert actual.agent == expected.agent
 
 
-@preserves_state2(
+@preserves_state(
     Default,
     [
         [
@@ -249,7 +195,7 @@ def test_forward_bump_into_wall(state):
     assert actual.agent == state.agent
 
 
-@changes_state2(
+@changes_state(
     Default,
     [
         (
@@ -295,7 +241,7 @@ def test_backward(start, expected):
     assert actual.agent == expected.agent
 
 
-@preserves_state2(
+@preserves_state(
     Default,
     [
         (
@@ -327,7 +273,7 @@ def test_backward_bump_into_wall(state):
     assert actual.agent == state.agent
 
 
-@changes_state2(
+@changes_state(
     Default,
     [
         (
@@ -378,7 +324,7 @@ def test_forward_push_block(start, expected):
     assert actual.entities == expected.entities
 
 
-@changes_state2(
+@changes_state(
     Default,
     [
         (
