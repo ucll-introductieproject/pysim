@@ -428,3 +428,58 @@ def test_cross_chasm_forward(start, expected):
     actual, _ = state.forward()
     assert actual.agent == expected.agent
     assert actual.entities == expected.entities
+
+
+@changes_state(
+    {
+        **Default,
+        'F': combine(tile_initializer_factory(tiles.Chasm), entity_initializer_factory(Block)),
+    },
+    [
+        (
+                [
+                    '.F>',
+                ],
+                [
+                    '>F.',
+                ],
+        ),
+        (
+                [
+                    '<F.',
+                ],
+                [
+                    '.F<',
+                ],
+        ),
+        (
+                [
+                    '.',
+                    'F',
+                    'v',
+                ],
+                [
+                    'v',
+                    'F',
+                    '.',
+                ],
+        ),
+        (
+                [
+                    '^',
+                    'F',
+                    '.',
+                ],
+                [
+                    '.',
+                    'F',
+                    '^',
+                ],
+        ),
+    ]
+)
+def test_cross_chasm_backrward(start, expected):
+    state, _ = start.backward()
+    actual, _ = state.backward()
+    assert actual.agent == expected.agent
+    assert actual.entities == expected.entities
