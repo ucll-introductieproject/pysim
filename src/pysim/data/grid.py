@@ -14,9 +14,15 @@ class Grid(Generic[T]):
         self.__contents = [[initializer(Vector(x, y)) for x in range(width)] for y in range(height)]
 
     def __getitem__(self, position: Vector) -> T:
-        assert 0 <= position.x < self.width, f'{position.x} not between 0 and {self.width}'
-        assert 0 <= position.y < self.height, f'{position.y} not between 0 and {self.height}'
+        assert self.is_inside(position), f'{position} is outside of the grid'
         return self.__contents[position.y][position.x]
+
+    def __setitem__(self, position: Vector, value: T) -> None:
+        assert self.is_inside(position), f'{position} is outside of the grid'
+        self.__contents[position.y][position.x] = value
+
+    def is_inside(self, position: Vector) -> bool:
+        return 0 <= position.x < self.width and 0 <= position.y < self.height
 
     @property
     def width(self) -> int:
