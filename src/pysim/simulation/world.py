@@ -9,7 +9,7 @@ class World:
     __grid: Grid[Tile]
 
     def __init__(self, grid: Grid[Tile]):
-        self.__grid = grid
+        self.__grid = grid.shallow_copy()
 
     @property
     def width(self) -> int:

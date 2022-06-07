@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TypeVar, Generic, Callable
 
 from .vector import Vector
@@ -31,3 +33,6 @@ class Grid(Generic[T]):
     @property
     def height(self) -> int:
         return len(self.__contents)
+
+    def shallow_copy(self) -> Grid[T]:
+        return Grid(self.width, self.height, self.__getitem__)
