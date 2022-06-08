@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic, Callable
+from typing import TypeVar, Generic, Callable, Any
 
 from pygame import Rect, Surface, draw
 
@@ -26,6 +26,9 @@ class Empty(TileState):
     def match(self, matcher: Matcher[T]) -> T:
         return matcher.on_empty()
 
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, Empty)
+
 
 class Wall(TileState):
     def render(self, surface: Surface, rect: Rect) -> None:
@@ -35,6 +38,9 @@ class Wall(TileState):
     def match(self, matcher: Matcher[T]) -> T:
         return matcher.on_wall()
 
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, Wall)
+
 
 class Chasm(TileState):
     def render(self, surface: Surface, rect: Rect) -> None:
@@ -43,6 +49,9 @@ class Chasm(TileState):
 
     def match(self, matcher: Matcher[T]) -> T:
         return matcher.on_chasm()
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, Chasm)
 
 
 class Tile:
