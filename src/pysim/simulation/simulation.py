@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Tuple, cast, Type, Iterable, Dict
+from typing import List, Tuple, cast, Type, Iterable, Dict, Any
 
 from pysim.data import Vector
 from pysim.data.orientation import Orientation
@@ -34,6 +34,17 @@ class Simulation:
     @property
     def entities(self) -> List[Entity]:
         return self.__entities
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Simulation):
+            return False
+        if self.__world != other.__world:
+            return False
+        if self.__agent != other.__agent:
+            return False
+        if self.__entities != other.__entities:
+            return False
+        return True
 
     def forward(self) -> Tuple[Simulation, Event]:
         def to_empty():
