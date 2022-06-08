@@ -125,6 +125,16 @@ def preserves_state(factory_map: Dict[str, InitializerFactory], state_strings):
     return wrapper
 
 
+def forward(state: Simulation) -> Simulation:
+    new_state, event = state.forward()
+    return new_state
+
+
+def backward(state: Simulation) -> Simulation:
+    new_state, event = state.backward()
+    return new_state
+
+
 @changes_state(
     Default,
     [
@@ -167,8 +177,7 @@ def preserves_state(factory_map: Dict[str, InitializerFactory], state_strings):
     ]
 )
 def test_forward_into_empty_space(start, expected):
-    actual, events = start.forward()
-    assert actual.agent == expected.agent
+    assert forward(start) == expected
 
 
 @preserves_state(
@@ -191,8 +200,7 @@ def test_forward_into_empty_space(start, expected):
     ]
 )
 def test_forward_bump_into_wall(state):
-    actual, events = state.forward()
-    assert actual.agent == state.agent
+    assert forward(state) == state
 
 
 @changes_state(
@@ -237,8 +245,7 @@ def test_forward_bump_into_wall(state):
     ]
 )
 def test_backward(start, expected):
-    actual, events = start.backward()
-    assert actual.agent == expected.agent
+    assert backward(start) == expected
 
 
 @preserves_state(
@@ -269,8 +276,7 @@ def test_backward(start, expected):
     ]
 )
 def test_backward_bump_into_wall(state):
-    actual, events = state.backward()
-    assert actual.agent == state.agent
+    assert backward(state) == state
 
 
 @changes_state(
@@ -319,9 +325,7 @@ def test_backward_bump_into_wall(state):
     ]
 )
 def test_forward_push_block(start, expected):
-    actual, event = start.forward()
-    assert actual.agent == expected.agent
-    assert actual.entities == expected.entities
+    assert forward(start) == expected
 
 
 @changes_state(
@@ -370,9 +374,7 @@ def test_forward_push_block(start, expected):
     ]
 )
 def test_backward_push_block(start, expected):
-    actual, event = start.backward()
-    assert actual.agent == expected.agent
-    assert actual.entities == expected.entities
+    assert backward(start) == expected
 
 
 @changes_state(
@@ -424,10 +426,7 @@ def test_backward_push_block(start, expected):
     ]
 )
 def test_cross_chasm_forward(start, expected):
-    state, _ = start.forward()
-    actual, _ = state.forward()
-    assert actual.agent == expected.agent
-    assert actual.entities == expected.entities
+    assert forward(forward(start)) == expected
 
 
 @changes_state(
@@ -479,7 +478,24 @@ def test_cross_chasm_forward(start, expected):
     ]
 )
 def test_cross_chasm_backward(start, expected):
-    state, _ = start.backward()
-    actual, _ = state.backward()
-    assert actual.agent == expected.agent
-    assert actual.entities == expected.entities
+    assert backward(backward(start)) == expected
+
+
+@changes_state(
+    {
+        **Default,
+        'F': combine(tile_initializer_factory(tiles.Chasm), entity_initializer_factory(Block)),
+    },
+    [
+        (
+                [
+                    '>BC',
+                ],
+                [
+                    '.>F',
+                ],
+        ),
+    ]
+)
+def test_push_block_into_chasm(start, expected):
+    assert forward(start) == expected
