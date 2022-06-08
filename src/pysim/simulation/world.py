@@ -1,3 +1,5 @@
+from typing import Any
+
 from pygame import Surface
 
 from pysim.data import Grid, Vector
@@ -32,3 +34,8 @@ class World:
         rect = context.tile_rectangle(position)
         tile = self[position]
         tile.render(surface, rect)
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, World):
+            return False
+        return self.__grid == other.__grid
