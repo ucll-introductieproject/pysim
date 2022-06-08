@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TypeVar, Generic, Callable
+from typing import TypeVar, Generic, Callable, Any
 
 from .vector import Vector
 
@@ -36,3 +36,8 @@ class Grid(Generic[T]):
 
     def shallow_copy(self) -> Grid[T]:
         return Grid(self.width, self.height, self.__getitem__)
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Grid):
+            return False
+        return self.__contents == other.__contents
