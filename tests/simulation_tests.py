@@ -16,11 +16,11 @@ from pysim.simulation.world import World
 
 
 class Initializer(ABC):
-    grid: Grid[tiles.Tile]
+    grid: Grid[tiles.TileState]
     agents: List[Agent]
     entities: List[Entity]
 
-    def __init__(self, grid: Grid[tiles.Tile], agents: List[Agent], entities: List[Entity]):
+    def __init__(self, grid: Grid[tiles.TileState], agents: List[Agent], entities: List[Entity]):
         self.grid = grid
         self.agents = agents
         self.entities = entities
@@ -30,7 +30,7 @@ class Initializer(ABC):
         pass
 
 
-def tile_initializer_factory(tile_factory: Callable[[], tiles.Tile]) -> InitializerFactory:
+def tile_initializer_factory(tile_factory: Callable[[], tiles.TileState]) -> InitializerFactory:
     class TileInitializer(Initializer):
         def initialize(self, position: Vector) -> None:
             self.grid[position] = tile_factory()
@@ -60,7 +60,7 @@ def combine(*factories: InitializerFactory) -> InitializerFactory:
     class CombinedInitializer(Initializer):
         initializers: List[Initializer]
 
-        def __init__(self, grid: Grid[tiles.Tile], agents: List[Agent], entities: List[Entity]):
+        def __init__(self, grid: Grid[tiles.TileState], agents: List[Agent], entities: List[Entity]):
             super().__init__(grid, agents, entities)
             self.initializers = [factory(grid, agents, entities) for factory in factories]
 
@@ -71,7 +71,7 @@ def combine(*factories: InitializerFactory) -> InitializerFactory:
     return CombinedInitializer
 
 
-InitializerFactory = Callable[[Grid[tiles.Tile], List[Agent], List[Entity]], Initializer]
+InitializerFactory = Callable[[Grid[tiles.TileState], List[Agent], List[Entity]], Initializer]
 
 Default: Dict[str, InitializerFactory] = {
     '.': tile_initializer_factory(tiles.Empty),
@@ -90,7 +90,7 @@ def create_parser(factory_map: Dict[str, InitializerFactory]) -> Callable[[List[
         assert len(set(len(row) for row in rows)) == 1, "Rows must be of equal length"
         width = len(rows[0])
         height = len(rows)
-        grid = Grid[tiles.Tile](width, height, lambda _: tiles.Empty())
+        grid = Grid[tiles.TileState](width, height, lambda _: tiles.Empty())
         agents: List[Agent] = []
         entities: List[Entity] = []
         initializer_map = {char: factory(grid, agents, entities) for char, factory in factory_map.items()}
@@ -478,7 +478,7 @@ def test_cross_chasm_forward(start, expected):
         ),
     ]
 )
-def test_cross_chasm_backrward(start, expected):
+def test_cross_chasm_backward(start, expected):
     state, _ = start.backward()
     actual, _ = state.backward()
     assert actual.agent == expected.agent

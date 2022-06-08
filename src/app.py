@@ -17,7 +17,7 @@ from pysim.simulation.animator import Animator
 from pysim.simulation.entities.agent import Agent
 from pysim.simulation.entities.block import Block
 from pysim.simulation.simulation import Simulation
-from pysim.simulation.tiles import Tile, Wall, Empty, Chasm
+from pysim.simulation.tiles import TileState, Wall, Empty, Chasm
 from pysim.simulation.world import World
 
 
@@ -91,11 +91,11 @@ class TestScreen(Screen):
 def create_simulation() -> Simulation:
     width = 10
     height = 10
-    grid: Grid[MutableCell[Tile]] = Grid(width, height, lambda p: MutableCell[Tile](Empty()))
+    grid: Grid[MutableCell[TileState]] = Grid(width, height, lambda p: MutableCell[TileState](Empty()))
     grid[Vector(0, 0)].value = Wall()
     grid[Vector(2, 1)].value = Chasm()
     grid[Vector(1, 4)].value = Chasm()
-    world = World(Grid[Tile](width, height, lambda p: grid[p].value))
+    world = World(Grid[TileState](width, height, lambda p: grid[p].value))
     entities = [
         Block(Vector(1, 3))
     ]

@@ -2,13 +2,13 @@ from pygame import Surface
 
 from pysim.data import Grid, Vector
 from pysim.graphics.graphics_settings import GraphicsContext
-from pysim.simulation.tiles import Tile
+from pysim.simulation.tiles import TileState
 
 
 class World:
-    __grid: Grid[Tile]
+    __grid: Grid[TileState]
 
-    def __init__(self, grid: Grid[Tile]):
+    def __init__(self, grid: Grid[TileState]):
         self.__grid = grid.shallow_copy()
 
     @property
@@ -19,7 +19,7 @@ class World:
     def height(self) -> int:
         return self.__grid.height
 
-    def __getitem__(self, position: Vector) -> Tile:
+    def __getitem__(self, position: Vector) -> TileState:
         return self.__grid[position]
 
     def render(self, surface: Surface, context: GraphicsContext) -> None:

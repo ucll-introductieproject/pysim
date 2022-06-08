@@ -8,7 +8,7 @@ from pygame import Rect, Surface, draw
 T = TypeVar('T')
 
 
-class Tile(ABC):
+class TileState(ABC):
     @abstractmethod
     def render(self, surface: Surface, rect: Rect) -> None:
         ...
@@ -18,7 +18,7 @@ class Tile(ABC):
         ...
 
 
-class Empty(Tile):
+class Empty(TileState):
     def render(self, surface: Surface, rect: Rect) -> None:
         color = (255, 255, 255)
         draw.rect(surface, color, rect)
@@ -27,7 +27,7 @@ class Empty(Tile):
         return matcher.on_empty()
 
 
-class Wall(Tile):
+class Wall(TileState):
     def render(self, surface: Surface, rect: Rect) -> None:
         color = (0, 0, 0)
         draw.rect(surface, color, rect)
@@ -36,13 +36,18 @@ class Wall(Tile):
         return matcher.on_wall()
 
 
-class Chasm(Tile):
+class Chasm(TileState):
     def render(self, surface: Surface, rect: Rect) -> None:
         color = (0, 0, 255)
         draw.rect(surface, color, rect)
 
     def match(self, matcher: Matcher[T]) -> T:
         return matcher.on_chasm()
+
+
+class Tile:
+    def __init__(self, state: TileState):
+        self.state = state
 
 
 class Matcher(ABC, Generic[T]):
@@ -60,7 +65,7 @@ class Matcher(ABC, Generic[T]):
 
 
 def match_tile(
-        tile: Tile,
+        tile: TileState,
         /,
         if_empty: Callable[[], T],
         if_wall: Callable[[], T],
