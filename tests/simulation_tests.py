@@ -77,10 +77,10 @@ Default: Dict[str, InitializerFactory] = {
     '.': tile_initializer_factory(tiles.Empty),
     'W': tile_initializer_factory(tiles.Wall),
     'C': tile_initializer_factory(tiles.Chasm),
-    '^': agent_initializer_factory(NORTH),
-    'v': agent_initializer_factory(SOUTH),
-    '<': agent_initializer_factory(WEST),
-    '>': agent_initializer_factory(EAST),
+    '^': combine(tile_initializer_factory(tiles.Empty), agent_initializer_factory(NORTH)),
+    'v': combine(tile_initializer_factory(tiles.Empty), agent_initializer_factory(SOUTH)),
+    '<': combine(tile_initializer_factory(tiles.Empty), agent_initializer_factory(WEST)),
+    '>': combine(tile_initializer_factory(tiles.Empty), agent_initializer_factory(EAST)),
     'B': combine(tile_initializer_factory(tiles.Empty), entity_initializer_factory(Block)),
 }
 
