@@ -25,6 +25,14 @@ class Tile(ABC):
     def __deepcopy__(self, memo: Any) -> Tile:
         ...
 
+    @abstractmethod
+    def is_passable(self) -> bool:
+        '''
+        Returns True if an agent can move onto this tile,
+        False otherwise.
+        '''
+        ...
+
 
 class Empty(Tile):
     def render(self, surface: Surface, rect: Rect) -> None:
@@ -42,6 +50,9 @@ class Empty(Tile):
 
     def __deepcopy__(self, memo: Any) -> Empty:
         return self
+
+    def is_passable(self) -> bool:
+        return True
 
 
 class Wall(Tile):
@@ -61,6 +72,9 @@ class Wall(Tile):
     def __deepcopy__(self, memo: Any) -> Wall:
         return self
 
+    def is_passable(self) -> bool:
+        return False
+
 
 class Chasm(Tile):
     def render(self, surface: Surface, rect: Rect) -> None:
@@ -78,6 +92,9 @@ class Chasm(Tile):
 
     def __deepcopy__(self, memo: Any) -> Chasm:
         return self
+
+    def is_passable(self) -> bool:
+        return True
 
 
 class Matcher(ABC, Generic[T]):
