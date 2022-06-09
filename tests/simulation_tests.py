@@ -277,7 +277,42 @@ def test_forward_push_block_to_empty(state, expected):
         ),
     ]
 )
-def test_forward_push_block_to_wall(state):
+def test_forward_push_block_into_wall(state):
+    expected = deepcopy(state)
+    state.forward(0)
+    assert state == expected
+
+
+@preserves_state(
+    DEFAULT_CHAR_MAP,
+    [
+        (
+                [
+                    '>BB',
+                ],
+        ),
+        (
+                [
+                    'BB<',
+                ],
+        ),
+        (
+                [
+                    'B',
+                    'B',
+                    '^',
+                ],
+        ),
+        (
+                [
+                    'v',
+                    'B',
+                    'B',
+                ],
+        ),
+    ]
+)
+def test_forward_push_block_into_block(state):
     expected = deepcopy(state)
     state.forward(0)
     assert state == expected
