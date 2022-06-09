@@ -8,7 +8,7 @@ from pygame import Rect, Surface, draw
 T = TypeVar('T')
 
 
-class TileState(ABC):
+class Tile(ABC):
     @abstractmethod
     def render(self, surface: Surface, rect: Rect) -> None:
         ...
@@ -17,8 +17,16 @@ class TileState(ABC):
     def match(self, matcher: Matcher[T]) -> T:
         ...
 
+    @abstractmethod
+    def __copy__(self) -> Tile:
+        ...
 
-class Empty(TileState):
+    @abstractmethod
+    def __deepcopy__(self, memo: Any) -> Tile:
+        ...
+
+
+class Empty(Tile):
     def render(self, surface: Surface, rect: Rect) -> None:
         color = (255, 255, 255)
         draw.rect(surface, color, rect)
@@ -29,8 +37,14 @@ class Empty(TileState):
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Empty)
 
+    def __copy__(self) -> Empty:
+        return self
 
-class Wall(TileState):
+    def __deepcopy__(self, memo: Any) -> Empty:
+        return self
+
+
+class Wall(Tile):
     def render(self, surface: Surface, rect: Rect) -> None:
         color = (0, 0, 0)
         draw.rect(surface, color, rect)
@@ -41,8 +55,14 @@ class Wall(TileState):
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Wall)
 
+    def __copy__(self) -> Wall:
+        return self
 
-class Chasm(TileState):
+    def __deepcopy__(self, memo: Any) -> Wall:
+        return self
+
+
+class Chasm(Tile):
     def render(self, surface: Surface, rect: Rect) -> None:
         color = (0, 0, 255)
         draw.rect(surface, color, rect)
@@ -53,10 +73,11 @@ class Chasm(TileState):
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Chasm)
 
+    def __copy__(self) -> Chasm:
+        return self
 
-class Tile:
-    def __init__(self, state: TileState):
-        self.state = state
+    def __deepcopy__(self, memo: Any) -> Chasm:
+        return self
 
 
 class Matcher(ABC, Generic[T]):
@@ -74,7 +95,7 @@ class Matcher(ABC, Generic[T]):
 
 
 def match_tile(
-        tile: TileState,
+        tile: Tile,
         /,
         if_empty: Callable[[], T],
         if_wall: Callable[[], T],
