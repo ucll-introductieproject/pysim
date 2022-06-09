@@ -76,3 +76,6 @@ class Vector:
 
     def __hash__(self) -> int:
         return self.x ^ self.y
+
+    def __str__(self) -> str:
+        return f"Vector({self.x}, {self.y})"
