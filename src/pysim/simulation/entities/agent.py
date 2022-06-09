@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Tuple, Any
+from typing import Any
 
 from pygame import Vector2
 
@@ -139,3 +139,9 @@ class Agent(Entity):
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Agent) and self.position == other.position and self.orientation is other.orientation
+
+    def __copy__(self) -> Agent:
+        return Agent(self.position, self.orientation)
+
+    def __deepcopy__(self, memodict: Any) -> Agent:
+        return self.__copy__()
