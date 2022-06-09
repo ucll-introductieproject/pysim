@@ -36,6 +36,9 @@ class _North(Orientation):
     def angle(self) -> float:
         return 270
 
+    def __str__(self) -> str:
+        return "NORTH"
+
 
 class _East(Orientation):
     def turn_left(self) -> Orientation:
@@ -50,6 +53,9 @@ class _East(Orientation):
     @property
     def angle(self) -> float:
         return 0
+
+    def __str__(self) -> str:
+        return "EAST"
 
 
 class _South(Orientation):
@@ -66,6 +72,9 @@ class _South(Orientation):
     def angle(self) -> float:
         return 90
 
+    def __str__(self) -> str:
+        return "SOUTH"
+
 
 class _West(Orientation):
     def turn_left(self) -> Orientation:
@@ -80,6 +89,9 @@ class _West(Orientation):
     @property
     def angle(self) -> float:
         return 180
+
+    def __str__(self) -> str:
+        return "WEST"
 
 
 NORTH = _North()

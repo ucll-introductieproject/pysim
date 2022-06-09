@@ -1,4 +1,7 @@
-from typing import TypeVar, Generic, Callable
+from __future__ import annotations
+
+from copy import deepcopy
+from typing import TypeVar, Generic, Callable, Any
 
 from .vector import Vector
 
@@ -31,3 +34,17 @@ class Grid(Generic[T]):
     @property
     def height(self) -> int:
         return len(self.__contents)
+
+    def __copy__(self) -> Grid[T]:
+        return Grid(self.width, self.height, self.__getitem__)
+
+    def __deepcopy__(self, memodict: Any) -> Grid[T]:
+        def copy_item(position: Vector) -> T:
+            return deepcopy(self[position], memodict)
+
+        return Grid(self.width, self.height, copy_item)
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Grid):
+            return False
+        return self.__contents == other.__contents

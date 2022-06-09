@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Tuple, Any
+from typing import Any
 
 from pygame import Vector2
 
@@ -125,33 +125,38 @@ class Agent(Entity):
     def orientation(self) -> Orientation:
         return self.__orientation
 
-    def forward(self) -> Tuple[Agent, Event]:
-        direction = Vector.from_orientation(self.__orientation)
-        new_position = self.__position + direction
-        new_agent = Agent(new_position, self.__orientation)
-        event = ForwardEvent(self.__position, self.__orientation)
-        return (new_agent, event)
+    def forward_destination(self) -> Vector:
+        '''
+        Returns the position of the agent were it to move forward.
+        '''
+        return self.position + Vector.from_orientation(self.orientation)
 
-    def backward(self) -> Tuple[Agent, Event]:
-        direction = Vector.from_orientation(self.__orientation)
-        new_position = self.__position - direction
-        new_agent = Agent(new_position, self.__orientation)
-        event = BackwardEvent(self.__position, self.__orientation)
-        return (new_agent, event)
+    def forward(self) -> None:
+        self.__position = self.forward_destination()
 
-    def turn_left(self) -> Tuple[Agent, Event]:
-        new_agent = Agent(self.__position, self.__orientation.turn_left())
-        event = TurnLeftEvent(self.__position, self.__orientation)
-        return (new_agent, event)
+    def backward_destination(self) -> Vector:
+        '''
+        Returns the position of the agent were it to move backward.
+        '''
+        return self.position - Vector.from_orientation(self.orientation)
 
-    def turn_right(self) -> Tuple[Agent, Event]:
-        new_agent = Agent(self.__position, self.__orientation.turn_right())
-        event = TurnRightEvent(self.__position, self.__orientation)
-        return (new_agent, event)
+    def backward(self) -> None:
+        self.__position = self.backward_destination()
 
-    def stay(self) -> Event:
-        event = StayEvent(self.__position, self.__orientation)
-        return event
+    def turn_left(self) -> None:
+        self.__orientation = self.__orientation.turn_left()
+
+    def turn_right(self) -> None:
+        self.__orientation = self.__orientation.turn_right()
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Agent) and self.position == other.position and self.orientation is other.orientation
+
+    def __copy__(self) -> Agent:
+        return Agent(self.position, self.orientation)
+
+    def __deepcopy__(self, memodict: Any) -> Agent:
+        return self.__copy__()
+
+    def __str__(self) -> str:
+        return f"Agent({self.position}, {self.orientation})"
