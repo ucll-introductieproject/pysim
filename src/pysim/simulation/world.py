@@ -51,6 +51,8 @@ class World:
             return False
         if self.__grid != other.__grid:
             return False
+        if self.__agents != other.__agents:
+            return False
         return True
 
     def __copy__(self) -> World:
