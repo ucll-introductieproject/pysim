@@ -145,3 +145,6 @@ class Agent(Entity):
 
     def __deepcopy__(self, memodict: Any) -> Agent:
         return self.__copy__()
+
+    def __str__(self) -> str:
+        return f"Agent({self.position}, {self.orientation})"
