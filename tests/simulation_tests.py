@@ -11,6 +11,7 @@ import pysim.simulation.tiles as tiles
 from pysim.data import Grid, Vector
 from pysim.data.orientation import NORTH, EAST, WEST, SOUTH, Orientation
 from pysim.simulation.entities.agent import Agent
+from pysim.simulation.events.nullfactory import NullEventFactory
 from pysim.simulation.simulation import Simulation
 from pysim.simulation.world import World
 
@@ -95,7 +96,8 @@ def create_parser(factory_map: Dict[str, InitializerFactory]) -> Callable[[List[
                 position = Vector(x, y)
                 initializer_map[char].initialize(position)
         world = World(grid, agents)
-        return Simulation(world)
+        event_factory = NullEventFactory()
+        return Simulation(world, event_factory)
 
     return parse
 
