@@ -21,7 +21,7 @@ class Simulation:
             if tile_at_destination.contents is not None:
                 object_push_destination = agent.position + Vector.from_orientation(agent.orientation) * 2
                 tile_receiving_object = self.__world[object_push_destination]
-                if tile_receiving_object.accepts_objects and tile_receiving_object.contents is None:
+                if tile_receiving_object.accepts_objects:
                     tile_at_destination.contents = None
                     tile_receiving_object.contents = tile_at_destination.contents
                     agent.forward()

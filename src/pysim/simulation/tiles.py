@@ -50,7 +50,7 @@ class CanContainObject:
 
     @property
     def accepts_objects(self) -> bool:
-        return True
+        return self.__contents is None
 
     @property
     def contents(self) -> Optional[Object]:
