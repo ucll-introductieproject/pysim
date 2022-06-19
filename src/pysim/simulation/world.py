@@ -3,10 +3,7 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any, List
 
-from pygame import Surface
-
 from pysim.data import Grid, Vector
-from pysim.graphics.graphics_settings import GraphicsContext
 from pysim.simulation.entities.agent import Agent
 from pysim.simulation.tiles import Tile
 
@@ -34,17 +31,6 @@ class World:
 
     def __getitem__(self, position: Vector) -> Tile:
         return self.__grid[position]
-
-    def render(self, surface: Surface, context: GraphicsContext) -> None:
-        for y in range(self.width):
-            for x in range(self.height):
-                position = Vector(x, y)
-                self.__render_tile(surface, context, position)
-
-    def __render_tile(self, surface: Surface, context: GraphicsContext, position: Vector) -> None:
-        rect = context.tile_rectangle(position)
-        tile = self[position]
-        tile.render(surface, rect)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, World):
