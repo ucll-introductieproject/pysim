@@ -8,10 +8,10 @@ from pytest import mark
 
 import pysim.simulation.objects as objects
 import pysim.simulation.tiles as tiles
+from events import agent_forward, nothing, parallel, object_moved, TestEventFactory
 from pysim.data import Grid, Vector
 from pysim.data.orientation import NORTH, EAST, WEST, SOUTH, Orientation
 from pysim.simulation.entities.agent import Agent
-from pysim.simulation.events.nullfactory import NullEventFactory
 from pysim.simulation.simulation import Simulation
 from pysim.simulation.world import World
 
@@ -29,7 +29,14 @@ class Initializer(ABC):
         ...
 
 
-def tile_initializer_factory(tile_factory: Callable[[], tiles.Tile]) -> InitializerFactory:
+TileFactory = Callable[[], tiles.Tile]
+
+ObjectFactory = Callable[[], objects.Object]
+
+InitializerFactory = Callable[[Grid[tiles.Tile], List[Agent]], Initializer]
+
+
+def tile_initializer_factory(tile_factory: TileFactory) -> InitializerFactory:
     class TileInitializer(Initializer):
         def initialize(self, position: Vector) -> None:
             self.grid[position] = tile_factory()
@@ -37,7 +44,7 @@ def tile_initializer_factory(tile_factory: Callable[[], tiles.Tile]) -> Initiali
     return TileInitializer
 
 
-def object_initializer_factory(object_factory: Callable[[], objects.Object]) -> InitializerFactory:
+def object_initializer_factory(object_factory: ObjectFactory) -> InitializerFactory:
     class ObjectInitializer(Initializer):
         def initialize(self, position: Vector) -> None:
             self.grid[position].contents = object_factory()
@@ -69,8 +76,6 @@ def combine(*factories: InitializerFactory) -> InitializerFactory:
     return CombinedInitializer
 
 
-InitializerFactory = Callable[[Grid[tiles.Tile], List[Agent]], Initializer]
-
 DEFAULT_CHAR_MAP: Dict[str, InitializerFactory] = {
     '.': tile_initializer_factory(tiles.Empty),
     'W': tile_initializer_factory(tiles.Wall),
@@ -96,18 +101,18 @@ def create_parser(factory_map: Dict[str, InitializerFactory]) -> Callable[[List[
                 position = Vector(x, y)
                 initializer_map[char].initialize(position)
         world = World(grid, agents)
-        event_factory = NullEventFactory()
+        event_factory = TestEventFactory()
         return Simulation(world, event_factory)
 
     return parse
 
 
-def changes_state(factory_map: Dict[str, InitializerFactory], before_after_pairs):
+def changes_state(factory_map: Dict[str, InitializerFactory], triples):
     def wrapper(function):
-        return mark.parametrize('state, expected', parsed_pairs)(function)
+        return mark.parametrize('state, expected, event', parsed_triples)(function)
 
     parse = create_parser(factory_map)
-    parsed_pairs = [(parse(before), parse(after)) for before, after in before_after_pairs]
+    parsed_triples = [(parse(before), parse(after), event) for before, after, event in triples]
     return wrapper
 
 
@@ -131,6 +136,7 @@ def preserves_state(factory_map: Dict[str, InitializerFactory], state_strings):
                 [
                     '.>',
                 ],
+                agent_forward(),
         ),
         (
                 [
@@ -139,6 +145,7 @@ def preserves_state(factory_map: Dict[str, InitializerFactory], state_strings):
                 [
                     '<.',
                 ],
+                agent_forward(),
         ),
         (
                 [
@@ -149,6 +156,7 @@ def preserves_state(factory_map: Dict[str, InitializerFactory], state_strings):
                     '^',
                     '.',
                 ],
+                agent_forward(),
         ),
         (
                 [
@@ -159,12 +167,14 @@ def preserves_state(factory_map: Dict[str, InitializerFactory], state_strings):
                     '.',
                     'v',
                 ],
+                agent_forward(),
         ),
     ]
 )
-def test_forward_into_empty_space(state, expected):
-    state.forward(0)
+def test_forward_into_empty_space(state, expected, event):
+    e = state.forward(0)
     assert state == expected
+    assert event == e
 
 
 @preserves_state(
@@ -196,8 +206,9 @@ def test_forward_into_empty_space(state, expected):
 )
 def test_forward_into_wall(state):
     expected = deepcopy(state)
-    state.forward(0)
+    event = state.forward(0)
     assert state == expected
+    assert event == nothing()
 
 
 @changes_state(
@@ -210,6 +221,10 @@ def test_forward_into_wall(state):
                 [
                     '.>B',
                 ],
+                parallel(
+                    agent_forward(),
+                    object_moved(Vector(1, 0), Vector(2, 0))
+                ),
         ),
         (
                 [
@@ -218,6 +233,10 @@ def test_forward_into_wall(state):
                 [
                     'B<.',
                 ],
+                parallel(
+                    agent_forward(),
+                    object_moved(Vector(1, 0), Vector(0, 0))
+                ),
         ),
         (
                 [
@@ -230,6 +249,10 @@ def test_forward_into_wall(state):
                     'v',
                     'B',
                 ],
+                parallel(
+                    agent_forward(),
+                    object_moved(Vector(0, 1), Vector(0, 2))
+                ),
         ),
         (
                 [
@@ -242,12 +265,17 @@ def test_forward_into_wall(state):
                     '^',
                     '.',
                 ],
+                parallel(
+                    agent_forward(),
+                    object_moved(Vector(0, 1), Vector(0, 0))
+                ),
         ),
     ]
 )
-def test_forward_push_block_to_empty(state, expected):
-    state.forward(0)
+def test_forward_push_block_to_empty(state, expected, event):
+    e = state.forward(0)
     assert state == expected
+    assert e == event
 
 
 @preserves_state(
@@ -281,8 +309,9 @@ def test_forward_push_block_to_empty(state, expected):
 )
 def test_forward_push_block_into_wall(state):
     expected = deepcopy(state)
-    state.forward(0)
+    event = state.forward(0)
     assert state == expected
+    assert event == nothing()
 
 
 @preserves_state(
@@ -316,5 +345,6 @@ def test_forward_push_block_into_wall(state):
 )
 def test_forward_push_block_into_block(state):
     expected = deepcopy(state)
-    state.forward(0)
+    event = state.forward(0)
     assert state == expected
+    assert event == nothing()

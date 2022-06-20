@@ -18,7 +18,7 @@ class Simulation(Generic[Event]):
         self.__world = world
         self.__event_factory = event_factory
 
-    def forward(self, agent_index: int) -> None:
+    def forward(self, agent_index: int) -> Event:
         ef = self.__event_factory
         agent = self.__world.agents[agent_index]
         agent_destination = agent.position + Vector.from_orientation(agent.orientation)
@@ -36,9 +36,13 @@ class Simulation(Generic[Event]):
                         ef.actor_moved_forward(agent_index),
                         ef.object_moved(object_origin, object_destination)
                     )
+                else:
+                    return ef.nothing()
             else:
                 agent.forward()
                 return ef.actor_moved_forward(agent_index)
+        else:
+            return ef.nothing()
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Simulation):
