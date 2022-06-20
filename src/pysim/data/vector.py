@@ -75,7 +75,7 @@ class Vector:
         return self + Vector.from_orientation(orientation) * distance
 
     def __hash__(self) -> int:
-        return self.x ^ self.y
+        return hash(self.x) ^ hash(self.y)
 
     def __str__(self) -> str:
         return f"Vector({self.x}, {self.y})"
