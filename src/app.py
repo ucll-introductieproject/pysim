@@ -26,8 +26,8 @@ class TestScreen(Screen):
             rectangle = Rectangle(self.__layer, rect, pygame.Color(255, 0, 0))
             return rectangle
 
-        x = LinearFloatAnimation(start=0, stop=1000, duration=10)
-        return x.map(animate_rectangle)
+        animated_x = LinearFloatAnimation(start=0, stop=1000, duration=10)
+        return animated_x.map(animate_rectangle)
 
     def update(self, elapsed_seconds: float) -> None:
         self.__total_time += elapsed_seconds * settings['speedup']
