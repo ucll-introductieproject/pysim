@@ -34,7 +34,7 @@ class Simulation(Generic[Event]):
                     agent.forward()
                     return ef.parallel(
                         ef.actor_moved_forward(agent_index),
-                        ef.object_moved(object_origin, object_destination)
+                        ef.object_moved(object_origin, agent.orientation)
                     )
                 else:
                     return ef.nothing()

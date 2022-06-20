@@ -223,7 +223,7 @@ def test_forward_into_wall(state):
                 ],
                 parallel(
                     agent_forward(),
-                    object_moved(Vector(1, 0), Vector(2, 0))
+                    object_moved(Vector(1, 0), EAST)
                 ),
         ),
         (
@@ -235,7 +235,7 @@ def test_forward_into_wall(state):
                 ],
                 parallel(
                     agent_forward(),
-                    object_moved(Vector(1, 0), Vector(0, 0))
+                    object_moved(Vector(1, 0), WEST)
                 ),
         ),
         (
@@ -251,7 +251,7 @@ def test_forward_into_wall(state):
                 ],
                 parallel(
                     agent_forward(),
-                    object_moved(Vector(0, 1), Vector(0, 2))
+                    object_moved(Vector(0, 1), SOUTH)
                 ),
         ),
         (
@@ -267,7 +267,7 @@ def test_forward_into_wall(state):
                 ],
                 parallel(
                     agent_forward(),
-                    object_moved(Vector(0, 1), Vector(0, 0))
+                    object_moved(Vector(0, 1), NORTH)
                 ),
         ),
     ]
