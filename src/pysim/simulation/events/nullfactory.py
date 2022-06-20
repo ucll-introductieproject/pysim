@@ -11,3 +11,6 @@ class NullEventFactory(EventFactory[None]):
 
     def parallel(self, *event: None) -> None:
         return None
+
+    def nothing(self) -> None:
+        return None
