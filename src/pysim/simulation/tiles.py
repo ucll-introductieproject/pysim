@@ -23,10 +23,10 @@ class Tile(ABC):
 
     @abstractmethod
     def is_passable(self) -> bool:
-        '''
+        """
         Returns True if an agent can move onto this tile,
         False otherwise.
-        '''
+        """
         ...
 
     @property
@@ -41,7 +41,7 @@ class Tile(ABC):
 
     @contents.setter
     @abstractmethod
-    def contents(self, object: Object) -> None:
+    def contents(self, obj: Object) -> None:
         ...
 
 
@@ -57,8 +57,8 @@ class CanContainObject:
         return self.__contents
 
     @contents.setter
-    def contents(self, object: Object) -> None:
-        self.__contents = object
+    def contents(self, obj: Object) -> None:
+        self.__contents = obj
 
 
 class CannotContainObject:
@@ -71,7 +71,7 @@ class CannotContainObject:
         return None
 
     @contents.setter
-    def contents(self, object: Object) -> None:
+    def contents(self, obj: Object) -> None:
         raise NotImplementedError()
 
 
