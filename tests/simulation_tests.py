@@ -11,7 +11,7 @@ import pysim.simulation.tiles as tiles
 from events import agent_forward, nothing, parallel, object_moved, TestEventFactory
 from pysim.data import Grid, Vector
 from pysim.data.orientation import NORTH, EAST, WEST, SOUTH, Orientation
-from pysim.simulation.entities.agent import Agent
+from pysim.simulation.agent import Agent
 from pysim.simulation.simulation import Simulation
 from pysim.simulation.world import World
 

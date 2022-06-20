@@ -4,10 +4,9 @@ from typing import Any
 
 from pysim.data import Vector
 from pysim.data.orientation import Orientation
-from pysim.simulation.entities.entity import Entity
 
 
-class Agent(Entity):
+class Agent:
     __position: Vector
     __orientation: Orientation
 

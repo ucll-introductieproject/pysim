@@ -4,7 +4,7 @@ from copy import deepcopy
 from typing import Any, List
 
 from pysim.data import Grid, Vector
-from pysim.simulation.entities.agent import Agent
+from pysim.simulation.agent import Agent
 from pysim.simulation.tiles import Tile
 
 
