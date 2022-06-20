@@ -18,3 +18,7 @@ class EventFactory(ABC, Generic[Event]):
     @abstractmethod
     def parallel(self, *event: Event) -> Event:
         ...
+
+    @abstractmethod
+    def nothing(self) -> Event:
+        ...
