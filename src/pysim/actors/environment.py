@@ -6,9 +6,9 @@ def export(func):
     return func
 
 
-def is_exported_method(object: Any) -> bool:
-    return hasattr(object, 'exported') and callable(object) and object.exported
+def is_exported_method(obj: Any) -> bool:
+    return hasattr(obj, 'exported') and callable(obj) and obj.exported
 
 
 def collect_exported_methods(cl):
-    return [id for id, member in cl.__dict__.items() if is_exported_method(member)]
+    return [identifier for identifier, member in cl.__dict__.items() if is_exported_method(member)]
