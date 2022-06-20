@@ -126,18 +126,18 @@ class Agent(Entity):
         return self.__orientation
 
     def forward_destination(self) -> Vector:
-        '''
+        """'
         Returns the position of the agent were it to move forward.
-        '''
+        """
         return self.position + Vector.from_orientation(self.orientation)
 
     def forward(self) -> None:
         self.__position = self.forward_destination()
 
     def backward_destination(self) -> Vector:
-        '''
+        """'
         Returns the position of the agent were it to move backward.
-        '''
+        """
         return self.position - Vector.from_orientation(self.orientation)
 
     def backward(self) -> None:
