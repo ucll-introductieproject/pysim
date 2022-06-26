@@ -1,7 +1,7 @@
 from pysim.data import Vector
 from pysim.data.orientation import Orientation
 from pysim.simulation.entities.entity import Entity
-from pysim.simulation.events.event import Event
+from pysim.simulation.events import Event
 
 
 class _MovedEvent(Event):
