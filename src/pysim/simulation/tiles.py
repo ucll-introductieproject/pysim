@@ -5,14 +5,18 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import Any, NoReturn, Optional
 
-from pygame import Rect, Surface, draw
+from pygame import Color
 
+from pysim.data import Vector
+from pysim.graphics.context import GraphicsContext
+from pysim.graphics.primitives.primitive import Primitive
+from pysim.graphics.primitives.shapes import Rectangle
 from pysim.simulation.entities.entity import Entity
 
 
 class Tile(ABC):
     @abstractmethod
-    def render(self, surface: Surface, rect: Rect) -> None:
+    def render(self, context: GraphicsContext, position: Vector) -> Primitive:
         ...
 
     def __copy__(self) -> NoReturn:
@@ -80,9 +84,10 @@ class Empty(CanContainObject, Tile):
     def __init__(self, contents: Optional[Entity] = None) -> None:
         self.contents = contents
 
-    def render(self, surface: Surface, rect: Rect) -> None:
-        color = (255, 255, 255)
-        draw.rect(surface, color, rect)
+    def render(self, context: GraphicsContext, position: Vector) -> Primitive:
+        rect = context.tile_rectangle(position)
+        color = Color(200, 200, 200)
+        return Rectangle(context.tile_layer, rect, color)
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Empty)
@@ -96,9 +101,10 @@ class Empty(CanContainObject, Tile):
 
 
 class Wall(CannotContainObject, Tile):
-    def render(self, surface: Surface, rect: Rect) -> None:
-        color = (0, 0, 0)
-        draw.rect(surface, color, rect)
+    def render(self, context: GraphicsContext, position: Vector) -> Primitive:
+        rect = context.tile_rectangle(position)
+        color = Color(0, 0, 0)
+        return Rectangle(context.tile_layer, rect, color)
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Wall)
@@ -114,9 +120,10 @@ class Chasm(CanContainObject, Tile):
     def __init__(self, contents: Optional[Entity] = None) -> None:
         self.contents = contents
 
-    def render(self, surface: Surface, rect: Rect) -> None:
-        color = (0, 0, 255)
-        draw.rect(surface, color, rect)
+    def render(self, context: GraphicsContext, position: Vector) -> Primitive:
+        rect = context.tile_rectangle(position)
+        color = Color(0, 0, 255)
+        return Rectangle(context.tile_layer, rect, color)
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Chasm)
